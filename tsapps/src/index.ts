@@ -1,3 +1,4 @@
-const a:number =10
-console.log(a)
-a =100
+let add = function (a: number, b: number): number {
+    return a + b
+}
+console.log(add(10,10))

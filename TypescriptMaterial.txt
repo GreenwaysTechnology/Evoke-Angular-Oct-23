@@ -632,3 +632,103 @@ const b =90
 console.log(`b ${b}`)
 //src/index.ts:9:1 - error TS2588: Cannot assign to 'b' because it is a constant.
 //b=100
+
+.....................................................................................
+			 functions
+.....................................................................................
+
+What is function?
+   function is going to encapsulate the code/logic
+
+How to declare function , and how invoke?
+//function declaration
+function sayHello(){
+    //logic
+   console.log('Hello')   
+}
+//function invocation
+sayHello()
+
+..
+
+function args and parameters
+
+
+//here a and b are variables which types are infered based on the values we pass
+function add(a, b) {
+    let c = a + b
+    console.log(`The Result is ${c}`)
+}
+add(10, 10)
+//add()
+add("abc",10)
+
+How to restrict a and b types?
+
+
+//here a and b are variables which types are infered based on the values we pass
+function add(a:number, b:number) {
+    let c = a + b
+    console.log(`The Result is ${c}`)
+}
+add(10, 10)
+//add()
+// add("abc",10)
+
+Default args:
+............
+
+function add(a:number=0, b:number=0) {
+    let c = a + b
+    console.log(`The Result is ${c}`)
+}
+add(10, 10)
+add()
+
+Optional Args:
+  This is ts feature, you can skip passing values but there will not be any default values , so there is possiblity of error.
+
+
+function add(a?:number, b?:number) {
+    let c = a + b
+    console.log(`The Result is ${c}`)
+}
+add(10, 10)
+add()
+.....
+Return types and values:
+........................
+
+function add(a:number=0,b:number=0):number {
+    return a + b 
+}
+
+void:
+function add(a:number=0,b:number=0):void {
+    console.log(a+b)
+}
+add(10,10)
+...................................................................................
+			 Function as value: Functional Programming
+....................................................................................
+
+In js , functions are literals(values).
+
+Since function value,it can be assigned to a variable.
+
+let         a =    10
+ |          |       |
+keyword  variable  value
+
+Anonymous functions: function without name.
+
+//anonymous function
+let hello = function() {
+    console.log("Hello")
+}
+hello()
+
+let add = function (a: number, b: number): number {
+    return a + b
+}
+console.log(add(10,10))
