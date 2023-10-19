@@ -396,4 +396,239 @@ if you want to run javascript in server env(outside browser)
     eg:
 	E:\session\Evoke\tsapps>node build/index.js
 	 Hello world
+.....................................................................................
+ 			Typescript language core concepts
+
+1.Language fundamentals
+   ->How to declare variables
+   ->How to use type system -static type/strong typing
+   ->Literals -values
+2.How to declare functions
+
+3.Object oriented Programming and implementation
+
+4.Modules - packages
+
+5.Decorators - annotations		
+
 ...................................................................................
+
+How to declare variables ?
+
+In javascript 
+
+var or let or const or this variableName=value(literals)
+
+In Typescript
+
+var or let or const variableName:Datatype=value(literals)
+
+Data types are decided based on literals:
+
+Literals in js and ts:
+.......................
+
+1.string
+2.number
+3.boolean
+4.undefined
+5.NaN -Not a Number
+6.infinity 
+7.function
+8.object
+9.null
+
+Data Types:
+............
+
+Primitives
+  =>string,number,boolean
+
+Reference Types
+  =>Object,Array
+
+Other Types
+ void
+ undefined
+ any
+ function
+ unknown
+ enum
+
+Strings:
+//strings
+let firstName: string = "Subramanian"
+let lastName: string = 'Murugan'
+console.log("Name " + firstName + lastName)
+console.log("Name ", firstName, lastName)
+console.log(`Name ${firstName}  ${lastName}`)
+
+number: 64 bit
+//numbers
+let qty: number = 10
+let price: number = 2000
+let total: number = qty * price
+console.log(`Qty ${qty} Price ${price} Total ${total} `)
+
+boolean:
+//booleans
+let isValid:boolean = true 
+let isEnabled:boolean = false
+
+undefined: if variable is declared with any type , if there is no value is initalized 
+that variable will have undefined.
+
+//undefined
+let message:string;
+console.log(message)
+
+let myname:undefined;
+console.log(myname)
+.....................................................................................
+				Compilation Errors
+....................................................................................
+
+let price:number ="hee"
+
+src/index.ts:3:5 - error TS2322: Type 'string' is not assignable to type 'number'.
+
+3 let price:number ="hee"
+      ~~~~~
+
+[8:39:07 pm] Found 1 error. Watching for file changes
+
+
+let qty: number = 100
+// let price:number ="hee"
+qty =""
+
+src/index.ts:4:1 - error TS2322: Type 'string' is not assignable to type 'number'.
+
+4 qty =""
+  ~~~
+
+[8:40:03 pm] Found 1 error. Watching for file changes.
+....................................................................................
+			   Type Inference
+...................................................................................
+
+Types of variables can be mentioned in two ways
+
+1.explicit types
+
+ let a:number=10
+
+2.implicit type- type inference
+  
+ let b =10
+  here the type b is understood as number...
+
+ in Future assigment you can reinitalize the variable with different types.
+
+let b =100
+console.log(b)
+b=900
+console.log(b)
+b=false //error
+....................................................................................
+				.....................................................................................
+			   NaN
+
+NaN is nothing but Not a Number.
+NaN represents "Runtime numerical computation error'
+NaN internally having error code.
+
+When you get NaN?
+
+ =>when you do numerical operation against undefined values
+
+if you get NaN , you have to fix because it is runtime bug.
+//NaN
+let price =100
+let qty
+
+let total = price * qty //number * qty = NaN
+
+console.log(`Price ${price}  Qty ${qty} total ${total}`)
+
+.....................................................................................
+			 Div by 0
+////////////////////////////////////////////////////////////////////////////////////
+Infinity: 
+   if you divide any number by 0
+
+let price = 100
+let avgPrice = price / 0
+console.log(`Avg Price ${avgPrice}`)//Avg Price Infinity
+.....................................................................................
+.....................................................................................
+			 any type
+....................................................................................
+
+In typescript if you declare variable with explicit type or implicit(via type inference), the variable must follow the type rules.
+
+eg:
+let a: number = 10
+a=100;
+//a="hello"
+
+let b =100;
+//b="hello"
+
+But sometimes i dont want to restrict a variable with particular type, variable must accept any type of value in future assigments.
+   Thats where we use "any" type
+
+let a:any =1
+console.log(`a is ${a}`)
+a="hello"
+console.log(`a is ${a}`)
+a=true
+console.log(`a is ${a}`)
+...................................................................................
+.....................................................................................
+			   Adanced Booleans
+....................................................................................
+
+Java:
+ int a =10;
+ if(a){}
+
+in js 
+ let a=10;
+ if(a){}
+
+In js/ts every thing is true,except the following values
+
+Fasly values:
+
+1.boolean false
+2.0
+3.undefined
+4.empty string "" ''
+5.NaN
+6.null
+
+
+//advanced boolean
+
+let a: number = 0
+if (a) {
+    console.log('a is valid')
+} else {
+    console.log('a is not valid')
+}
+.....................................................................................
+			  const
+......................................................................................
+if any variable is declared with const keyword "cant be reinitalized"
+
+//const 
+
+let a =10;
+console.log(`a ${a}`)
+a=90
+console.log(`a ${a}`)
+const b =90
+console.log(`b ${b}`)
+//src/index.ts:9:1 - error TS2588: Cannot assign to 'b' because it is a constant.
+//b=100
