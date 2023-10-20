@@ -732,3 +732,170 @@ let add = function (a: number, b: number): number {
     return a + b
 }
 console.log(add(10,10))
+.....................................................................................
+Function as parameter: Higher order function
+.............................................
+//function as parameter
+
+function sayHello(greet) {
+ greet('test')
+}
+//function is assigned to a variable that variable can be passed
+let hello = function (message:string) {
+    console.log('Hello')
+}
+sayHello(hello)
+
+sayHello(function(){
+    console.log('Hello,how are you?')
+})
+....................................................................................
+Hof with paramater
+function sayHello(greet) {
+    greet('Hello')
+}
+sayHello(function (message) {
+    console.log(message)
+});
+.....................................................................................
+			E6 and anonymous functions -Arrow functions
+....................................................................................
+
+
+//old style of writting anonymous function
+let hello = function () {
+
+}
+//new style - es 6 style - arrow function
+let hai = () => {
+    console.log('hello')
+}
+hai()
+
+//if function has only one line of body, we can remove {}
+hai = () => console.log('hello')
+hai()
+//
+let add = (a: number = 0, b: number = 0): void => {
+    let c = a + b
+    console.log(c)
+}
+add(10, 10)
+
+///return
+
+let multiply = (a: number = 0, b: number = 0): number => {
+    return a * b
+}
+console.log(multiply(10, 10))
+//if function has only return statement: we can remove {} and return statement
+
+multiply = (a: number = 0, b: number = 0): number => a * b
+console.log(multiply(10, 10))
+
+.....................................................................................
+Hof and Arrow:
+.............
+
+// const greet = h => {
+//     h()
+// }
+
+const greet = h => h()
+
+let hello = () => console.log('hello')
+greet(hello);
+//lnline
+greet(() => console.log('hello,inline'))
+
+//passing parameters
+
+let subscribe = (a) => {
+    console.log(`a ${a}`)
+    a('hello')
+}
+//literals : number,string,boolean,undefined,NaN,infinity,function,null,object
+// subscribe(1)
+// subscribe('subu')
+// subscribe(true)
+subscribe(function (message) { console.log(message) })
+subscribe((message) => { console.log(message + 'arrow') })
+//..............
+
+let login = (userName: string, password: string, resolve: Function, reject: Function) => {
+    //biz logic 
+    if (userName === 'admin' && password === 'admin') {
+        resolve('Login success')
+    } else {
+        reject('Login failed')
+    }
+
+}
+login('admin', 'admin', (status) => {
+    console.log(status)
+}, (err) => {
+    console.log(err)
+})
+....................................................................................
+			  Union Type
+....................................................................................
+
+Union Type :
+  A variable can have multiple data types.
+
+//type
+let id: number | string = 1
+id = "abc"
+
+let gender: "Male" | "Female" | "Third" = "Male"
+
+gender = "Male"
+gender = "Female"
+//gender ="test"
+
+//functions and union type
+function getJobStatus(jobStatus: "Open" | "Pending" | "Closed" | "Wait List" = "Open") {
+    console.log(jobStatus)
+}
+getJobStatus("Open")
+
+let mode = (varient: "Dark" | "Light" = "Dark") => {
+    console.log(varient)
+}
+mode("Light")
+mode()
+.....................................................................................
+			Object oriented Programming and implementations
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
