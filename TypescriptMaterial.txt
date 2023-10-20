@@ -865,7 +865,613 @@ let mode = (varient: "Dark" | "Light" = "Dark") => {
 mode("Light")
 mode()
 .....................................................................................
-			Object oriented Programming and implementations
+		Object oriented Programming and implementations
+.....................................................................................
+ES 6 Introduced classes.
+Type script added more power to class declarations.
+
+
+class:
+ -instance variables
+ -instance methods
+ -constructors
+ -static variables and methods
+
+How to create instance?
+
+class Employee {
+    //instance variables 
+    id: number = 0
+    firstName: string = "Subramanian"
+    lastName: string = "Murugan"
+    status: boolean = true
+}
+
+//emp is just reference variable
+//type is infered 
+//new is keyword
+//Employee() is constructor call
+let emp = new Employee()
+console.log(emp.id)
+console.log(emp.firstName)
+console.log(emp.lastName)
+console.log(emp.status)
+
+Adding constructors:
+
+class Employee {
+    //instance variables 
+    id: number
+    firstName: string
+    lastName: string
+    status: boolean
+    constructor() {
+        this.id = 0
+        this.firstName = "subramnaian"
+        this.lastName = "murugan"
+        this.status = false
+    }
+}
+
+//emp is just reference variable
+//type is infered 
+//new is keyword
+//Employee() is constructor call
+let emp = new Employee()
+console.log(emp.id)
+console.log(emp.firstName)
+console.log(emp.lastName)
+console.log(emp.status)
+
+Constructor parameters
+
+class Employee {
+    //instance variables 
+    id: number
+    firstName: string
+    lastName: string
+    status: boolean
+    constructor(id: number = 0, firstName: string = "", lastName: string = "", status: boolean = false) {
+        this.id = id
+        this.firstName = firstName
+        this.lastName = lastName
+        this.status = status
+    }
+}
+
+//emp is just reference variable
+//type is infered 
+//new is keyword
+//Employee() is constructor call
+let emp = new Employee(1, "Subramanian", "Murugan", false)
+console.log(emp.id)
+console.log(emp.firstName)
+console.log(emp.lastName)
+console.log(emp.status)
+
+methods:
+........
+
+class ProductService {
+    constructor() { }
+    //methods
+    findAll(): string {
+        return "products"
+    }
+    save(product: string): void {
+        console.log('save method is called')
+    }
+}
+
+let productService =new ProductService()
+console.log(productService.findAll())
+productService.save('myproduct')
+....................................................................................
+			 Encapsulation
+..................................................................................
+Js does not provide encapsulation but typescript provides.
+
+Encapuslation keywords
+
+1.public 
+2.private
+3.prototected
+
+instance variables and methods should be declared public/private/protected..
+
+By default all instance variables and methods are public...
+
+class Employee {
+    //instance variables 
+    public id: number
+    public firstName: string
+    public lastName: string
+    public status: boolean
+    constructor(id: number = 0, firstName: string = "", lastName: string = "", status: boolean = false) {
+        this.id = id
+        this.firstName = firstName
+        this.lastName = lastName
+        this.status = status
+    }
+}
+let emp = new Employee(1, "Subramanian", "Murugan", false)
+console.log(emp.id)
+console.log(emp.firstName)
+console.log(emp.lastName)
+console.log(emp.status)
+
+private:
+//private 
+
+class AuthService {
+    private userName:string
+    private password:string 
+
+    public getUserName():string {
+        return this.userName
+    }
+
+}
+let authService = new AuthService()
+//authService.userName
+....................................................................................
+		 Code Refactoring with private and public keywords
+
+Angular uses this concept heavily.
+
+
+ constructor(id: number = 0, firstName: string = "", lastName: string = "", status: boolean = false) 
+  here id ,firstName are all local variables.
+
+Note:
+ In Type script  all constructor local variables can be converted into instance variables.
+
+ by adding keyword called public or private.
+constructor(public id: number = 0, public firstName: string = "", public lastName: string = "", public status: boolean = false)
+
+//way 1: declare variables with in class
+// class Employee {
+//     //instance variables 
+//     public id: number
+//     public firstName: string
+//     public lastName: string
+//     public status: boolean
+
+//     constructor(id: number = 0, firstName: string = "", lastName: string = "", status: boolean = false) {
+//         this.id = id
+//         this.firstName = firstName
+//         this.lastName = lastName
+//         this.status = status
+//     }
+// }
+
+// //way 2: initalize the variables within constructor using private and public 
+// class Employee {
+//     constructor(public id: number = 0, public firstName: string = "", public lastName: string = "", public status: boolean = false) {
+//         this.id = id
+//         this.firstName = firstName
+//         this.lastName = lastName
+//         this.status = status
+//     }
+// }
+
+//way 3: initalize the variables within constructor
+class Employee {
+    constructor(public id: number = 0, public firstName: string = "", public lastName: string = "", public status: boolean = false) { }
+}
+
+let emp = new Employee(1, "Subramanian", "Murugan", false)
+console.log(emp.id)
+console.log(emp.firstName)
+console.log(emp.lastName)
+console.log(emp.status)
+.....................................................................................
+			IS-A(inheritance) and Has-a(dependency injection)
+
+Inheritance:
+..................
+1.class based
+2.interface based
+3.abstract class based
+
+
+//class based inheritance
+
+class Account {
+    constructor() {
+        console.log('Account class')
+    }
+}
+class SavingsAccount extends Account {
+    constructor() {
+        super()
+        console.log('Savings account')
+    }
+}
+let sb = new SavingsAccount()
+
+overriding based class methods:
+...............................
+//class based inheritance
+
+class Account {
+    constructor() {
+        console.log('Account class')
+    }
+    public deposit(): number {
+        return 100
+    }
+}
+class SavingsAccount extends Account {
+    constructor() {
+        super()
+        console.log('Savings account')
+    }
+    public deposit(): number {
+        return 1000 * super.deposit()
+    }
+}
+let sb = new SavingsAccount()
+console.log(sb.deposit());
+
+protected:
+  
+//class based inheritance
+
+class Account {
+    constructor() {
+        console.log('Account class')
+    }
+    protected deposit(): number {
+        return 100
+    }
+}
+class SavingsAccount extends Account {
+    constructor() {
+        super()
+        console.log('Savings account')
+    }
+    public deposit(): number {
+        return 1000 * super.deposit()
+    }
+}
+let sb = new SavingsAccount()
+console.log(sb.deposit());
+
+.....................................................................................
+				interfaces
+.....................................................................................
+interfaces are used to have common declartion can be implemented across the class
+
+interface Account {
+    calculateInterest(): number
+}
+interface Loan {
+    getLoan():string 
+}
+
+class GoldLoanAccount implements Account,Loan {
+    calculateInterest(): number {
+        return 10
+    }
+    getLoan(): string {
+        return "GoldLoan"
+    }
+}
+class HousingLoanAccount implements Account {
+    calculateInterest(): number {
+        return 15
+    }
+}
+let loan = new GoldLoanAccount()
+console.log(loan.calculateInterest())
+.....................................................................................
+			  Abstract classes
+.....................................................................................
+abstract class Animal {
+    abstract eat(): string
+    saveAnimals() {
+        return "Animals need to be saved from hunters"
+    }
+}
+class Tiger extends Animal {
+    eat(): string {
+        return "Tiger eats"
+    }
+}
+let animal = new Tiger();
+console.log(animal.eat())
+console.log(animal.saveAnimals())
+...................................................................................
+			  Dependency Injection - Has-a
+...................................................................................
+class Address {
+    constructor(public city: string = "", public street: string = "", public state: string = "") { }
+}
+
+class Employee {
+    constructor(public id: number = 0, public firstName: string = "", public lastName: string = "", public status: boolean = false, public address: Address = new Address()) { }
+}
+
+let emp = new Employee(1, "Subramanian", "Murugan", false, new Address('Coimbatore', '10th street', "Tamil nadu"))
+console.log(emp.id)
+console.log(emp.firstName)
+console.log(emp.lastName)
+console.log(emp.status)
+console.log(emp.address.street)
+console.log(emp.address.city)
+console.log(emp.address.state)
+//////////////
+
+
+class ProductService {
+    constructor() {
+
+    }
+    findAll() {
+        return 'products'
+    }
+}
+class ProductController {
+
+    constructor(private productService:ProductService) { }
+    public init() {
+        console.log(this.productService.findAll())
+    }
+}
+let ctrl = new ProductController(new ProductService())
+ctrl.init()
+
+...................................................................................
+			Object Types
+..................................................................................
+
+Objects can be created in two ways:
+
+1.Constructor pattern
+  Using functions - es 5 
+  Using classes - es 6
+2.literal pattern
+
+ //literal object
+
+let employee = {
+    id: 1,
+    name: 'Subramanian',
+    status: true
+}
+console.log(employee.id)
+console.log(employee.name)
+console.log(employee.status)
+
+Data types for objects 
+
+1.class as type
+2.interface as type
+3.type keyword as type
+
+how to enforece type safty for literal object...
+//literal object
+
+//type class 
+
+class Employee {
+    id:number 
+    name:string
+    status:boolean
+}
+
+let employee:Employee = {
+    id: 1,
+    name: 'Subramanian',
+    status: true
+}
+console.log(employee.id)
+console.log(employee.name)
+console.log(employee.status)
+
+
+Optional properties:
+//literal object
+
+//type class 
+
+class Employee {
+    id:number 
+    name?:string
+    status?:boolean
+}
+
+let employee:Employee = {
+    id: 1,
+    name: 'Subramanian',
+    status: true
+}
+console.log(employee.id)
+console.log(employee.name)
+console.log(employee.status)
+
+let employee1:Employee = {
+    id: 1,
+    name: 'Subramanian',
+}
+console.log(employee.id)
+console.log(employee.name)
+console.log(employee.status)
+........................
+
+//literal object
+
+interface Employee {
+    id:number 
+    name?:string
+    status?:boolean
+}
+
+let employee:Employee = {
+    id: 1,
+    name: 'Subramanian',
+    status: true
+}
+console.log(employee.id)
+console.log(employee.name)
+console.log(employee.status)
+
+let employee1:Employee = {
+    id: 1,
+    name: 'Subramanian',
+}
+console.log(employee.id)
+console.log(employee.name)
+console.log(employee.status)
+....................................................................................
+			  Generics - Collections
+...................................................................................
+
+//arrays:this list takes any type of data
+let list = [1, "hello", true]
+
+//Restrict that array should hold only numbers,strings,products...
+
+//Generics <T>
+
+//non generics syntax
+let numList: number[] = [1, 2, 3, 5]
+
+//generics syntax
+let nameList: Array<string> = ["Subramanian", "Murugan"]
+
+//product Array
+class Product {
+    id: number
+    name: string
+}
+
+let productList: Array<Product> = [
+    { id: 1, name: 'phone' },
+    { id: 1, name: 'phone' }
+]
+.....................................................................................
+			 Decorators - Annoations
+...................................................................................
+
+Annotations provide program meta data.
+
+@Entity,@Override,@Controller,@Service etc....
+
+Types scripts supports annotations we call decorators
+
+Decorators experimental feature in typescript...
+
+tsconfig.json
+{
+    "compilerOptions": {
+        "outDir": "build",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true     
+    },
+    "exclude": ["node_modules"],
+    "files": ["src/index.ts"]
+}
+
+What is decorator or how decorator is implemented?
+
+  Decorator is just java script function.
+
+How to use Decorator
+ Decorators are used on class,fields,methods
+ @Decorator..
+
+//Declare decorators
+
+function Course(target: any) {
+    //decorator logic
+    Object.defineProperty(target.prototype, 'subject', { value: 'Angular' });
+}
+
+//using decorators
+@Course
+class Student {
+    constructor(public name: string) { }
+}
+let student = new Student('Subramanian') as any 
+console.log(`${student.name} is learning ${student.subject} `)
+
+
+
+//Declare decorators with input
+
+function Course(courInfo:any) {
+   //write decorator logic
+   return function(target:any) {
+       //decorator logic
+       Object.defineProperty(target.prototype, 'subject', { value: courInfo });
+   } 
+}
+
+//using decorators
+@Course({name:'C#',duration:'40 hours'})
+class Student {
+    constructor(public name: string) { }
+}
+let student = new Student('Subramanian') as any 
+console.log(`${student.name} is learning ${student.subject.name} `)
+
+...................................................................................
+			E6 Modules
+...................................................................................
+
+How to break your app code into files and folder, and how to share code among them?
+
+That is where modules comes into picture.. this is eq to namespaces in c# or packages in java...
+
+What code you can from file to file
+
+variables,
+class
+objects
+arrays
+functions
+interfaces
+
+There are two keywords to share code
+
+1.export 
+2.export default
+
+How to use the code into another file?
+
+import 
+
+
+<script src="/build/index.js" type="module"></script>
+
+{
+    "compilerOptions": {
+        "outDir": "build",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "module": "ES6"
+    },
+    "exclude": ["node_modules"],
+    "files": ["src/index.ts"]
+}
+src/services/todo.service.ts
+
+export class TodoService {
+    constructor() {
+
+    }
+    findAll() {
+        return [{ id: 1, text: 'learn ts', status: false }]
+    }
+}
+
+import {TodoService} from './services/todo.service.js'
+
+let todoService = new TodoService()
+
+console.log(todoService.findAll())
 
 
 
@@ -884,6 +1490,14 @@ mode()
 
 
 
+
+
+
+
+
+
+
+			
 
 
 
