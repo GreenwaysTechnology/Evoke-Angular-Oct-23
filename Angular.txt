@@ -1,0 +1,522 @@
+....................................................................................
+				How to setup Angular project
+.....................................................................................
+
+in order to setup project and to manage project work flows, like compilation, building project for production,testing...
+We need a tool - angular cli tool.
+
+Installation:
+npm install -g @angular/cli
+
+ng --help
+ng <command>
+
+Commands:
+  ng add <collection>            Adds support for an external library to your project.
+  ng analytics                   Configures the gathering of Angular CLI usage metrics.
+  ng build [project]             Compiles an Angular application or library into an output directory named dist/ at
+                                 the given output path.                                                   [aliases: b]
+  ng cache                       Configure persistent disk cache and retrieve cache statistics.
+  ng completion                  Set up Angular CLI autocompletion for your terminal.
+  ng config [json-path] [value]  Retrieves or sets Angular configuration values in the angular.json file for the
+                                 workspace.
+  ng deploy [project]            Invokes the deploy builder for a specified project or for the default project in the
+                                 workspace.
+  ng doc <keyword>               Opens the official Angular documentation (angular.io) in a browser, and searches for
+                                 a given keyword.                                                         [aliases: d]
+  ng e2e [project]               Builds and serves an Angular application, then runs end-to-end tests.    [aliases: e]
+  ng extract-i18n [project]      Extracts i18n messages from source code.
+  ng generate                    Generates and/or modifies files based on a schematic.                    [aliases: g]
+  ng lint [project]              Runs linting tools on Angular application code in a given project folder.
+  ng new [name]                  Creates a new Angular workspace.                                         [aliases: n]
+  ng run <target>                Runs an Architect target with an optional custom builder configuration defined in
+                                 your project.
+  ng serve [project]             Builds and serves your application, rebuilding on file changes.          [aliases: s]
+  ng test [project]              Runs unit tests in a project.                                            [aliases: t]
+  ng update [packages..]         Updates your workspace and its dependencies. See https://update.angular.io/.
+  ng version                     Outputs Angular CLI version.                                             [aliases: v]
+
+Options:
+  --help  Shows a help message for this command in the console.                                              [boolean]
+
+For more information, see https://angular.io/cli/.
+
+....................................................................................
+
+Create new Project
+
+
+ng new appName
+
+ng new coreApp
+
+
+Basic Angular Project/App Structure
+
+folders
+ -node_modules
+    all angular libs @angular @somethiing
+ -src
+    Application code will go here
+
+
+files
+ package.json - project information like dependencies,scripts
+ 
+ts config -files
+  -ts.config - core configuration
+  -tsconfig.app.json - app specific compiler configuration
+  -tsconfig.spec.json  -testing related compiler configuration
+
+
+angular.json.
+  angular project automated by webpack,but we cant see any webpack.config.js file.
+ angular.json file is proxy file for webpack.
+
+ -app related configuration
+
+  
+App folder structure
+
+ src
+  |
+  app
+    -will have basic application code
+  assets
+  env
+ index.html
+ main.ts - entry file for app
+ styles.css - global css
+
+.....................................................................................
+
+How to run default dev server?
+
+npm start
+
+Open Browser 
+http://localhost:4200
+....................................................................................
+Flow of Angular:
+
+1.index.html
+    browser will try to construct inital tree,JS engine initalize the DOM Tree---->Angular Engine will kick start --> will initalize the App.
+
+<div> ?
+<h1>?
+<span> ?
+<p> -?
+  HTML tags
+
+<app-root> -?
+   ? HTML Tag
+Is it Html tag? Yes
+
+Types of HTML tags:
+
+1.built in elements
+2.custom elements
+
+You need to look html history and how browser understand html elements
+
+   <h1>---HTML Compiler encounters an element against HTML compiler Database
+    |
+    Yes -h1 is part of compiler database
+    |
+   h1 will be rendered accordingly
+
+  <foo>----HTML Compiler encounters an element against HTML compiler Database
+    |
+   No - foo is not part of compiler database
+    |
+   Compiler throws error that "UnKnownElement"
+    |
+   if compiler founds UnknownElement, compiler converts that into "Plain Text"
+	
+Before 2007, This is the situation.In 2007, W3c announced that HTML Language can expanded, The programmer can introduce their own html elements and attributes - Custom elements and attributes.
+How to give life to custom elements and attributes?
+  Via Javascript.
+Birth of HTML 5
+
+  <foo>----HTML Compiler encounters an element against HTML compiler Database
+    |
+   No - foo is not part of compiler database
+    |
+    Attach Js to treat foo as valid element  
+   |
+    We can render foo accordingly.
+
+
+Angular uses the custom elements pattern.
+
+so you can note down, <app-root> is just custom element.
+
+
+     app-root
+	|
+        ---------->[main.js---->app.module.js--->app.component.js]
+
+	app-root-----app.component.js
+
+
+2.browser loads angular js files in order
+
+<script src="runtime.js" type="module"></script>
+    -Angular Runtime
+<script src="polyfills.js" type="module"></script>
+    -browser specific libs
+<script src="styles.js" defer></script>
+    -css styles are loaded
+<script src="vendor.js" type="module"></script>
+    -angular framework and thrid party libs and apis
+
+<script src="main.js" type="module"></script>
+    -Your app will be loaded
+
+ main.ts(js)
+    |
+     --->app.module.ts(app.module.js)
+            |
+            -----app.component.ts(app.component.js)
+                     |
+                     <app-root> content will be displayed
+
+
+
+Note:
+  This is flow and file Names are default by convention, incase if want to change files name like from main.ts to foo.ts, you have to edit 
+
+angular.json 
+tsconfig-app.json 
+.....................................................................................
+
+main.ts
+  It is entry point to intialize the application.
+
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+
+import { AppModule } from './app/app.module';
+
+
+platformBrowserDynamic().bootstrapModule(AppModule)
+  .catch(err => console.error(err));
+
+
+
+import - keyword to import files 
+{} - what you are going to import
+from - keyword to link files
+@angular- folder
+platform-browser-dynamic -file Name
+
+
+platformBrowserDynamic it is function which returns "PlatformRef" Object which represents browser.
+
+bootstrapModule(AppModule) it is function which Creates an instance of an module for a given platform.
+
+....................................................................................
+				Angular Modularity
+....................................................................................
+
+Breaking app into smaller and smaller
+.....................................................................................
+			Angular Application structure
+.....................................................................................
+
+Angular apps are collection of objects 
+
+			   Object
+			     |
+            ----------------------------------------
+            Container                          non Container
+               |
+
+Container object contains other other objects including another container- Module Object
+Like java packages,c# namespaces, package container other packages called sub package.
+Container object is other wise called "Module Object".
+
+
+Modularity In Angular:
+
+Types of modularity in angular
+
+1.ES 6 modules -Physical modularity
+   sharing code between files
+ export,export default,import..
+
+export class ProductService{}
+
+import {ProductService} from './product.service'
+
+2.Angular modules - Logical modularity
+ 
+ Object contains other objects
+
+    "Every ng app must have one single container module called "app module".
+
+First app module must be loaded, then all sub modules will be loaded.
+...................................................................................
+				Root View/Page
+.....................................................................................
+
+
+AppComponent.ts
+
+ It is file which creates DOM tree , Which will render first 
+
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'my-first-project';
+}
+.....................................................................................
+				Angular Infra Structure Objects
+.....................................................................................
+
+Angular infra objects
+
+1.module
+2.component
+3.service
+4.directive
+5.pipes
+
+
+Note : 
+  in ng we never create infra object using new keyword
+ng depedency injector will create object , we use it.
+
+How to create angular infra objects / How to identify this object is module/component?
+
+Using decorators. Angular provides lot of decorators
+
+Built in decorators
+ Component 
+ ContentChild 
+ ContentChildren
+ Directive Host 
+ HostBinding
+ HostListener
+ Inject 
+ Injectable 
+ Input
+ NgModule
+ Optional 
+ Output 
+ Pipe
+ Self
+ SkipSelf 
+ ViewChild 
+ ViewChildren
+.............................
+What is component?
+
+ It is object which represents UI..All other objects just support component.
+
+In Angular , Component is other wise called "controller" in MVC Design pattern.
+ 
+How to write component? 
+
+Component is class
+
+Steps:
+1.declare class.
+
+class AppComponent {
+  
+}
+
+2.you have to use this class outside. you are refering this file inside module so we need to export it.
+
+export class AppComponent {
+
+}
+
+3.The above one is just plain class, we need to qualify as component(infra object)
+ we need to use decorator.
+@Component
+
+@Component({})
+export class AppComponent {
+
+}
+
+4.Decorator meta data which is object , passed as parameter to the decorator.
+  meta data object is just configuration object which configures the component.
+
+Basic configuration parameters
+
+1.selector:
+    -Name of the custom element -selector:'app-root'
+2.template or templateUrl
+    -Holds the html elements 
+ template - inline template - without html files
+ templateUrl - external template -html is written outside "app.component.html"
+
+
+import { Component } from "@angular/core";
+
+// @Component({ selector: 'app-root', templateUrl: 'app.component.html' })
+@Component({
+  selector: 'app-root',
+  template: `<div>
+                <h1>Your Company Heading!!</h1>
+            </div>`
+})
+export class AppComponent {
+
+}
+.....................................................................................
+				App Module
+
+=>It is entry module for any angular app.
+=>Root container object 
+=>App Module will have instructions that how to create objects- DI patterns
+
+
+Steps:
+
+1.Declare class and export.
+
+export class AppModule {
+    
+}
+
+2.Decorate using Decorator... @NgModule
+
+import { NgModule } from "@angular/core";
+
+@NgModule()
+export class AppModule {
+
+}
+
+3.Decorator Meta Data..
+
+Modules  are entry point for object creations.
+In Angular all infra structure objects(component,module,services etc...) are created Angular "Dependency  framework called Injector".
+
+Injector cant create object simply... we need to tell.. How we can tell? via Module meta data /module configurations
+
+Classification of Objects for configuration:
+............................................
+
+1.View Objects
+  Component,Directive,Pipe - Any class decorated with @Component,@Directive,@Pipe
+2.Module(Sub) Module objects
+   Any class is decorated with  @NgModule
+3.Services
+   Any class is decorated with @Injectable
+
+
+ declarations:[] 
+    contains view Objects(Component,Directive,Pipe)
+ imports:[],
+     contains submodule objects
+ providers:[]
+     contains service objects
+
+
+import { NgModule } from "@angular/core";
+import { AppComponent } from "./app.component";
+import { BrowserModule } from "@angular/platform-browser";
+
+
+@NgModule({
+    declarations: [AppComponent],
+    imports: [BrowserModule],
+    providers: []
+})
+export class AppModule {
+
+}
+
+Bootstrap:
+ bootstrap: [AppComponent]
+ 
+Which component is root component in the application.
+
+if you want to understand what is root component, we need to understand HTML ...
+
+
+HTML arch:
+
+ HTML document is made up of tree like structure...
+
+source code:
+ <div>
+   <div>
+     <div>
+	<span>Your page</page>
+     </div>
+  </div>
+ </div>
+
+During Runtime, Html elements forms tree...
+
+In the tree model, there must be root Node.
+
+In Angular "AppComponent" represents root Node.
+
+bootstrap: [AppComponent] tells what is root Node.
+.....................................................................................
+			How to create our own components
+.....................................................................................
+
+App Structure
+
+<div> -App Component
+   <header></header> ---Header Component
+   <main></main>  --Main Component
+   <footer></footer> --Footer Component
+</div>
+
+
+Header:
+header.component.ts
+
+import {Component} from '@angular/core'
+@Component({
+    selector:'app-header',
+    templateUrl:'header.component.html'
+})
+export class HeaderComponent {}
+
+header.component.html
+<div>
+    <header>
+        <h1>Your Company Header</h1>
+    </header>
+</div>
+
+app.module.ts
+
+import { NgModule } from "@angular/core";
+import { AppComponent } from "./app.component";
+import { BrowserModule } from "@angular/platform-browser";
+import { HeaderComponent } from "./header.component";
+
+
+@NgModule({
+    declarations: [AppComponent,HeaderComponent],
+    imports: [BrowserModule],
+    providers: [],
+    bootstrap: [AppComponent]
+})
+export class AppModule {
+
+}
+
+Note: in the similar way you have to create Footer, and Main 
+
+
+
+
+
+
