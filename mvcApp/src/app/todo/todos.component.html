@@ -1,0 +1,6 @@
+<div>
+   <div *ngFor="let todo of todos">
+      <h3>User Id {{todo.userId}} Id {{todo.id}}</h3>
+      <p>{{todo.title}} - {{todo.completed ? "completed" : "Not Completed"}}</p>
+   </div>
+</div>
