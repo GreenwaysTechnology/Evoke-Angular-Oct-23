@@ -514,9 +514,1025 @@ export class AppModule {
 }
 
 Note: in the similar way you have to create Footer, and Main 
+....................................................................................
+				Modularation 
+....................................................................................
+When we create angular apps, we need to modularize the code accordingly...
+
+src
+ |
+ app
+  |
+  folders
+    |
+    files
+ |
+ rootmodule 
+ rootcomponents
+
+
+ folders
+    |
+    submodule
+    components
+    services
+    data
+    templates,css files
+
+.....................................................................................
+			Sub Modules
+..................................................................................
+
+When you create components, we need organize the components according to domain
+
+your-app
+  src
+   |
+   header
+    |
+    header.component.ts
+    header.component.html
+    header.module.ts
+   products
+   customers
+   invoice
+ app.module.ts
+app.component.ts     
+
+1.create header module
+
+src/app/header/header.module.ts
+import { NgModule } from '@angular/core'
+import { HeaderComponent } from './header.component';
+
+@NgModule({
+    declarations: [HeaderComponent],
+    imports: [],
+    providers: [],
+    exports: [HeaderComponent]
+})
+export class HeaderModule { }
+
+Task:
+1.create footer folder,module,component...
+2.create main folder,module,component....
+
+..................................................................................
+			 Angular Coding style
+...................................................................................
+ Angular coding best pratices -Angular Style Guide
+
+https://angular.io/guide/styleguide
+
+
+File structure conventions:
+...........................
+->file must follow the domain model.
+
+product:
+ Ng has lot of infra objects (module,component,pipe,services...)
+
+component:
+ It has so many files
+ .ts file
+    component file
+    component spec file -  unit testing file
+ .html file
+ .css file
+
+header.component.ts | spec.ts | .html | .css
+
+header.component.ts
+header.component.html
+header.component.css
+header.component.spec.ts
+
+Modules
+ header.module.ts
+
+
+style guide for file names
+
+domainname.component|service|directive|pipe.ts
+
+hero.component.ts
+hero.service.ts
+hero.directive.ts
+hero.pipe.ts
+
+Custom elements Naming convention:Component selectors
+
+ <app-root> - recommended
+  
+ <approot>  - not recommended.
+
+Do use dashed-case or kebab-case for naming the element selectors of components.
+
+Should i use always app?
+ Not Necessary
+app is default prefix, it can be changed - angular.json file
+
+evoke-root
+evoke-customer
+evoke-product
+.....................................................................................class Names:
+
+ 1.Noun
+ 2.should be meaningfull
+ 3.should have suffix component,service,directive,pipe
+
+ HeaderComponent
+ HeaderService
+ HeaderDirective
+ HeaderPipe
+
+				Modularization
+....................................................................................
+
+Every angular apps must be modularized.
+
+-es 6 modules
+   folders
+     -files
+
+-angular modules
+    organization of objects
+
+src
+  |
+ app
+  you must have only root files
+  app.component.ts
+  app.module.ts
+ |
+ customer
+   |
+   customer component
+   customer module
+   customer service
+   customer pipe
+
+Use case:
+  -header
+  -footer
+  -body
+
+Component design prototype:
+
+  <body>
+	<app-root>
+		<app-header></app-header>
+	</app-root>
+  </body>
+.....................................................................................
+
+
+Steps to create Component
+
+1.declare componenent class
+2.declare component html 
+3.write component logic
+4.dependency injection inside moudle
+5.refer the compoent inside template.
+
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppComponent } from './app.component';
+import { HeaderComponent } from './header/header.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,HeaderComponent
+  ],
+  imports: [
+    BrowserModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+import { Component } from "@angular/core";
+
+
+@Component({
+    selector: 'app-header',
+    templateUrl:'header.component.html'
+})
+export class HeaderComponent {
+
+}
+
+app.component.html
+<div>
+    <app-header></app-header>
+</div>
+
+The components we create should not be injected inside root module.- we have to always create sub module and where we have to inject, and that sub module must be injected into main module.
+
+ Object creation order
+
+  app.module.ts----> submodule---->components
+
+
+src/app/app.module.ts
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppComponent } from './app.component';
+import { HeaderModule } from './header/header.module';
+// import { HeaderComponent } from './header/header.component';
+
+@NgModule({
+  declarations: [
+    // AppComponent,HeaderComponent
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,HeaderModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+
+src/header/header.module.ts
+import { NgModule } from '@angular/core'
+import { HeaderComponent } from './header.component';
+
+@NgModule({
+    declarations: [HeaderComponent],
+    imports: [],
+    providers: []
+})
+export class HeaderModule {
+
+}
+after running this code, still we have error
+
+error: src/app/app.component.html:2:5 - error NG8001: 'app-header' is not a known element:
+1. If 'app-header' is an Angular component, then verify that it is part of this module.
+2. If 'app-header' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@NgModule.schemas' of this component to suppress this message.
+
+
+Reason:
+
+if you refer, the component from the current module outside module, we cant access, the component is private scope..
+
+How to make it public?
+
+exports:
+  options
+
+import { NgModule } from '@angular/core'
+import { HeaderComponent } from './header.component';
+
+@NgModule({
+    declarations: [HeaderComponent],
+    imports: [],
+    providers: [],
+    exports:[HeaderComponent] //what are the components to be available outside this module
+})
+export class HeaderModule {
+
+}
+
+
+Problems in the dev flow:
+
+Tasks:
+
+1.create folder
+2.create files - component-ts,html,css,spec
+3.create module
+4.declare class -cmp,service...
+5.refer the classes inside module
+6.you need to inject submodule into main module..
+
+DRY
+
+if you repeate the same thing for every object , which increases lot of time.
+....................................................................................
+Automation:
+ code generation automation
+
+angular cli tool to generate code.
+
+Generates and/or modifies files based on a schematic.
+
+ng generate <schematic> [options]
+ng g <schematic> [options]
+
+eg:
+E:\session\Evoke\batch-02\moduleApp>ng g m  footer --module=app
+CREATE src/app/footer/footer.module.ts (192 bytes)
+UPDATE src/app/app.module.ts (450 bytes)
+
+E:\session\Evoke\batch-02\moduleApp>ng g c footer/footer  --flat --module=footer --export --skip-tests
+CREATE src/app/footer/footer.component.html (21 bytes)
+CREATE src/app/footer/footer.component.ts (202 bytes)
+CREATE src/app/footer/footer.component.css (0 bytes)
+UPDATE src/app/footer/footer.module.ts (305 bytes)
+
+E:\session\Evoke\batch-02\moduleApp>ng g m  main --module=app
+CREATE src/app/main/main.module.ts (190 bytes)
+UPDATE src/app/app.module.ts (511 bytes)
+
+E:\session\Evoke\batch-02\moduleApp>ng g c main/main  --flat --module=main --export --skip-tests
+.....................................................................................
+..........................................................................................................................................................................
+			 		MVC overview
+.....................................................................................
+
+Angular is MVC framework.
+
+M- Model - State
+V -View - Template
+C -Controller - Component.
+
+State : Data
+In Angular state can represented 
+primitives
+objects
+arrays
+
+controller === component
+
+.....................................................................................
+Data binding:
+ Transfering state to ui(view)  from the component(controller), View to Controller
+
+Types of databinding
+1.interpolation
+2.property binding
+3.attribute binding
+4.event binding
+5.two way data binding
+6.class binding
+7.style binding
+
+1.interpolation:
+ 
+   Transfering data from the controller to View(Template).
+
+Data:
+  Data can be string,number,boolean,object,array
+
+Where we can declare data?
+  ->Inside controller  - Inside component.
+
+eg:
+
+Type class:
+export class Todo {
+    //definit Assigement (!) : These variables either must be initalized or must marked with !
+    userId: number = 0
+    id!: number
+    title!: string
+    completed!: boolean
+}
+
+
+Mock Data : only few samples
+
+import { Todo } from "./todo.type";
+
+export const TODOS:Array<Todo> = [
+    {
+        userId: 1,
+        id: 1,
+        title: "delectus aut autem",
+        completed: false
+    },
+    {
+        userId: 1,
+        id: 2,
+        title: "quis ut nam facilis et officia qui",
+        completed: false
+    },
+]
+
+Service:
+import { Injectable } from '@angular/core';
+import { TODOS } from './todo.mock';
+import { Todo } from './todo.type';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class TodosService {
+  constructor() { }
+
+  //biz api
+  public findAll(): Array<Todo> {
+    return TODOS
+  }
+
+}
+component:
+import { Component } from '@angular/core';
+import { TodosService } from './todos.service';
+import { Todo } from './todo.type';
+
+@Component({
+  selector: 'app-todos',
+  templateUrl: './todos.component.html',
+  styleUrls: ['./todos.component.css']
+})
+export class TodosComponent {
+    //declare variable which is going to hold data
+    todos:Array<Todo>=[]
+    //tmpTodos:any
+
+    constructor(private todosService:TodosService){
+      // console.log(this.todosService.findAll())
+      this.todos = this.todosService.findAll()
+      //this.tmpTodos = JSON.stringify(this.todos);
+    }
+}
+
+template:
+<div>
+   <div *ngFor="let todo of todos">
+      <h3>User Id {{todo.userId}} Id {{todo.id}}</h3>
+      <p>{{todo.title}} - {{todo.completed ? "completed" : "Not Completed"}}</p>
+   </div>
+</div>
+.....................................................................................
+			 Component and data initalization
+.....................................................................................
+
+Note:
+ Data initalization should not be done within constructors.
+
+We should write initalization code inside compoent life cycle methods(hooks)
+
+Life cyle hooks are special methods provided by angular used for various purpose.
+
+There are two life cycle hooks are very very important
+
+1.ngOnInit()
+  It is called after component is ready.
+ Inside this method we have to write "resource intensive operations such as inital api call,websocket call, reactive subscriptions like so..."
+
+2.ngOnDestory()
+ It is called after component is destroyed.
+Inside this method we have to write "resource clean up activies such as closing sockets,stopping timers etc..."
+
+import { Component } from '@angular/core';
+import { PostsService } from './posts.service';
+import { Post } from './post.type';
+
+@Component({
+  selector: 'app-posts',
+  templateUrl: './posts.component.html',
+  styleUrls: ['./posts.component.css']
+})
+export class PostsComponent {
+  posts!: Post[]
+  constructor(private postService: PostsService) {
+    // this.posts = this.postService.findAll()
+  }
+  ngOnInit() {
+      this.posts = this.postService.findAll()
+  }
+  ngOnDestroy(){
+    console.log('Destory is called')
+  }
+}
+....................................................................................
+			   Service types
+....................................................................................
+
+There are two types services
+
+1.blocking service
+   The api which blocks/pause the current thread until the data is available.
+ which is not recommended
+2.non blocking service
+  The api which does not block/pause the current thread until the data is available.
+ which is  recommended - async programming...
+
+Javascript supports non blocking/async programming naturally.
+
+Styles of writting non blocking code
+
+1.callback styles
+2.Promise style
+3.Using rxjs 
+
+in order to write non block code, the language must give non blocking api such as 
+timer,socket apis..
+
+Non blocking:
+.............
+
+Steps:
+
+1.in order to write async/non blocking code, we must use high level non blocking apis provided by javascript or node platform.
+
+eg:
+ timer:
+   setTimeout,setInterval
+ network
+   XMLHttpRequest - ajax api
+   WebSocket 
+
+Styles of writing non blocking code
+
+1.callback pattern : which is core pattern
+2.Promise Pattern: which is advanced pattern which abstracts callbacks
+3.Reactive pattern: which is even more advanced pattern than Promise-
+
+
+Blocking apis: sequencial call
+function showMessage(message) {
+    console.log(message)
+}
+function sayHello() {
+    console.log('hello')
+}
+function main() {
+    showMessage('start')
+    sayHello();
+    showMessage('end')
+}
+main()
+
+async callback:
+function showMessage(message) {
+    console.log(message)
+}
+function sayHello(abc) {
+    //callback()
+    let posts = [{
+        "userId": 1,
+        "id": 4,
+        "title": "eum et est occaecati",
+        "body": "ullam et saepe reiciendis voluptatem adipisci\nsit amet autem assumenda provident rerum culpa\nquis hic commodi nesciunt rem tenetur doloremque ipsam iure\nquis sunt voluptatem rerum illo velit"
+    }]
+    setTimeout(abc, 5000, posts)
+}
+function main() {
+    showMessage('start')
+    //listener function : which is called once timeout event is triggered by kernal
+    sayHello(function (posts) {
+        console.log(posts)
+    });
+    showMessage('end')
+}
+main()
+
+Callback nesting or callback composition:
+.........................................
+
+The output one call back will be input to another callback...
+
+//compostion: the out put of one callback will be input to another callback. 
+
+function getUser(resolve, reject) {
+    console.log('getUser is called')
+    let user = {
+        name: 'admin', password: 'admin'
+    }
+    // user=null
+    if (user) {
+        setTimeout(resolve, 1000, user)
+    } else {
+        setTimeout(reject, 1000, 'User not found')
+    }
+}
+function login(user, resolve, reject) {
+    console.log('login is called')
+
+    if (user.name === 'admin' && user.password === 'admin') {
+        setTimeout(resolve, 1000, 'login success')
+    } else {
+        setTimeout(reject, 1000, 'login failed')
+    }
+}
+function showDashboard(status, resolve, reject) {
+    console.log('showDashboard is called')
+
+    if (status === 'login success') {
+        setTimeout(resolve, 1000, 'welcome to admin')
+    } else {
+        setTimeout(reject, 1000, 'Welcome to guest')
+    }
+}
+
+function main() {
+    getUser(function (user) {
+        login(user, function (status) {
+            showDashboard(status, function (page) {
+                console.log(page)
+            }, function (err) {
+                console.log(err)
+            })
+        }, function (err) {
+            console.log(err)
+        })
+    }, function (err) {
+        console.log(err)
+    })
+}
+main()
+
+
+   getUser(function (user) {
+        login(user, function (status) {
+            showDashboard(status, function (page) {
+                console.log(page)
+            }, function (err) {
+                console.log(err)
+            })
+        }, function (err) {
+            console.log(err)
+        })
+    }, function (err) {
+        console.log(err)
+    })
+
+ look at this code,
+   are you able to understand this code ?
+   are you able to debug this code?
+   are you able to scale this code?
+No
+
+This is called as callback hell.
+
+Callback hell is not bug, but the way of writing async code.
+
+
+How to write better async code, or how to avoid callback hell?
+
+Solution:
+ Promises
+
+There is Design pattern to write better callback programming(Async) programming.
+
+ "Promise".
+
+Promise is design pattern which hides complexity of callback patterns
+
+Since Promise is design pattern, many people have implemented Promise design pattern.
+
+1.JQuery -first promise implementation
+2.many libs and frameworks
+
+
+In order to standarize , ECMA committe decided to include Promise Design pattern at language level .(ES 6)
+2012 E6 Committe introduced promise design pattern  as  "Promise" Object  in javascript.
+
+.....................................................................................
+			  Promise Implementation
+.....................................................................................
+
+Features of Promise Object:
+1.Promise by deafult is Async. Which implements timer api with 0 ms .
+2.Promise can be used with any async callback based  implementations.
+
+Objective:
+
+ To remove callbacks in async/non blocking code. write cleaner async programming.
+ To remove complex callback chaining code.
+
+Difference between callbacks and promises:
+
+Essentially, a promise is a returned object to which you attach callbacks, instead of passing callbacks into a function.
+
+
+....................................................................................
+
+		Promise Implemenation: Object Object creations
+...................................................................................
+
+1. Create Promise Object from Promise contructor
+      new Promise()
+2. Create Promise object from factory apis 
+      Promise.resolve() / Promise.reject()
+
+Promise object methods:
+
+1.then - success
+2.catch - errors
+3.finally - clean up
+
+factory api to create Promise object
+4.resolve
+5.reject
+.......................................
+6.all
+7.race
+
+1.Promise factory api
+   -success - resolve
+   -failure - reject
+
+
+//basic promise implementation:
+//In promises , you dont need to pass function as parameter
+
+Promise with Success and also ensure that Promise is async.
+//basic promise implementation:
+//In promises , you dont need to pass function as parameter
+
+Promise with Success and also ensure that Promise is async.
+
+
+function blockMe(message) {
+    console.log(message)
+}
+function getMessage() {
+    //return Promise with success
+    return Promise.resolve('Hello')
+}
+
+blockMe('start')
+getMessage().then(message => console.log(message))
+blockMe('end')
+
+Promise with Error:
+
+function blockMe(message) {
+    console.log(message)
+}
+function getError() {
+    //return Promise with success
+    return Promise.reject('something went wrong')
+}
+
+blockMe('start')
+getError().catch(err => console.log(err))
+blockMe('end')
+
+Promise with either success or failure:
+.......................................
+
+function blockMe(message) {
+    console.log(message)
+}
+function login(name) {
+    if (name === 'admin') {
+        return Promise.resolve('Login success')
+    } else {
+        return Promise.reject('Login Failed')
+    }
+}
+
+blockMe('start')
+login('admin')
+    .then(status => console.log(status))
+    .catch(err => console.log(err))
+
+login('foo')
+    .then(status => console.log(status))
+    .catch(err => console.log(err))
+blockMe('end')
+
+
+2.Promise Constructor Api
+.........................
+
+i want to return users after 1000ms
+if i want to wrap any existing callback based program into promise based 
+
+ "You have to use Promise Constructor Pattern"
 
 
 
+function blockMe(message) {
+    console.log(message)
+}
+function login(name) {
+    return new Promise((resolve, reject) => {
+        if (name === 'admin') {
+            setTimeout(resolve, 1000, 'login success')
+        } else {
+            setTimeout(reject, 1000, 'Login Failed')
+        }
+    })
+}
 
+blockMe('start')
+login('admin')
+    .then(status => console.log(status))
+    .catch(err => console.log(err))
+login('foo')
+    .then(status => console.log(status))
+    .catch(err => console.log(err))
+blockMe('end')
+...................................................................................
+			 Solving CallBack Hell using Promises
+.................................................................................
+//promise chaning --sovling callback hell
+
+const getUser = () => {
+    console.log('getUser is called')
+    let user = {
+        name: 'admin'
+    }
+    //user=undefined
+    let error = {
+        message: 'User not Found'
+    }
+    return new Promise((resolve, reject) => {
+        if (user) {
+            setTimeout(resolve, 100, user)
+        } else {
+            setTimeout(reject, 100, error)
+        }
+    })
+}
+
+const login = user => {
+    console.log('login is called')
+    return new Promise((resolve, reject) => {
+        if (user.name === 'admin') {
+            setTimeout(resolve, 100, 'Login Success')
+        } else {
+            setTimeout(reject, 100, 'Login Failed')
+        }
+    })
+}
+const dashboard = status => {
+    return new Promise((resolve, reject) => {
+        if (status === 'Login Success') {
+            setTimeout(resolve, 100, 'Admin Page')
+        } else {
+            setTimeout(reject, 100, 'Guest Page')
+        }
+    })
+}
+//callback based 
+// getUser(user => {
+//     //call login
+//     login(user, status => {
+//         //call dashboard
+//         dashboard(status, adminPage => console.log(adminPage), err => console.log(err))
+//     }, err => console.log(err))
+// }, err => console.log(err))
+
+// getUser()
+//     .then(user => {
+//         return login(user)
+//     })
+//     .then(status => {
+//         return dashboard(status)
+//     })
+//     .then(page => {
+//         console.log(page)
+//     })
+//     .catch(err => console.log(err))
+
+getUser()
+    .then(user => login(user))
+    .then(status => dashboard(status))
+    .then(page => console.log(page))
+    .catch(err => console.log(err))
+
+
+....................................................................................
+				Promise Hell
+..................................................................................
+Multi thens makes code more complex to read,maintain,debug-Promise hell.
+
+How to solve the Promise Hell?
+
+Using async await keywords...
+
+Async ...await keywords:
+
+1.async keyword is used infront of function declaration- async function
+2.async functions by default return promise with success result always
+2.async functions can wrap expclit apis with promise.
+//compostion: the out put of one callback will be input to another callback. 
+
+function getUser() {
+    console.log('getUser is called')
+    return new Promise((resolve, reject) => {
+        let user = {
+            name: 'admin', password: 'admin'
+        }
+        // user=null
+        if (user) {
+            setTimeout(resolve, 1000, user)
+        } else {
+            setTimeout(reject, 1000, 'User not found')
+        }
+    })
+}
+function login(user) {
+    console.log('login is called')
+    return new Promise((resolve, reject) => {
+        if (user.name === 'admin' && user.password === 'admin') {
+            setTimeout(resolve, 1000, 'login success')
+        } else {
+            setTimeout(reject, 1000, 'login failed')
+        }
+    })
+
+}
+function showDashboard(status) {
+    console.log('showDashboard is called')
+    return new Promise((resolve, reject) => {
+        if (status === 'login success') {
+            setTimeout(resolve, 1000, 'welcome to admin')
+        } else {
+            setTimeout(reject, 1000, 'Welcome to guest')
+        }
+    })
+
+}
+
+async function main() {
+    // getUser()
+    //     .then(user => {
+    //         return login(user)
+    //     })
+    //     .then(status => {
+    //         return showDashboard(status)
+    //     }).then(page => {
+    //         console.log(page)
+    //     })
+    //     .catch(err => console.log(err))
+
+    try {
+        let user = await getUser()
+        let status = await login(user)
+        const page = await showDashboard(status)
+        console.log(page)
+    } catch (err) {
+        console.log(err)
+    }
+
+
+}
+main()
+.....................................
+
+import { Injectable } from '@angular/core';
+import { POSTS } from './post.mock';
+import { Post } from './post.type';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PostsService {
+
+  constructor() { }
+
+  //blocking api
+  // public findAll(): Post[] {
+  //   return POSTS
+  // }
+  //non blocking api using timer
+  // public findAll(callback: Function) {
+  //   setTimeout(callback, 5000, POSTS)
+  // }
+  public findAll(): Promise<Post[]> {
+    return new Promise((resolve, reject) => {
+      setTimeout(resolve, 5000, POSTS)
+    })
+  }
+}
+
+component
+import { Component } from '@angular/core';
+import { PostsService } from './posts.service';
+import { Post } from './post.type';
+
+@Component({
+  selector: 'app-posts',
+  templateUrl: './posts.component.html',
+  styleUrls: ['./posts.component.css']
+})
+export class PostsComponent {
+  posts!: Post[]
+  constructor(private postService: PostsService) { }
+  async ngOnInit() {
+    // this.posts = this.postService.findAll()
+    // this.postService.findAll((posts: Post[]) => {
+    //     this.posts = posts
+    // });
+    // this.postService.findAll().then(posts => {
+    //   this.posts = posts
+    // }).catch(err => {
+    //   console.log(err)
+    // })
+    try {
+      this.posts = await this.postService.findAll()
+    }
+    catch(err){
+      console.log(err)
+    }
+  }
+  ngOnDestroy() {
+    console.log('Destory is called')
+  }
+}
 
 
