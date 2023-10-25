@@ -1534,5 +1534,95 @@ export class PostsComponent {
     console.log('Destory is called')
   }
 }
+.....................................................................................
+			Advanced async programming using Reactive Extensions
+....................................................................................
+
+What is reactive?
+ Reactive is programming model for building async, data streaming,declarative applications.
+
+What is reactive extension? - reactiveX
+  An API for asynchronous programming with observable streams
+
+Promises vs ReactiveX?
+
+ Promises are fire and forgot model- it returns either success or failure
+ ReactiveX is stream based..
+
+
+Core concept of reactive Programming:
+
+1.Observable design pattern
+2.Iterator design pattern
+3.functional programming
+
+
+Implementation of reactive programming:
+
+reactive programming is language independant. 
+
+.Net:
+  rx.net
+java:
+ Rxjava,project reactor,Mutiny
+Js:
+ rxjs
+
+Angular uses rxjs internally in many places, for building advanced streaming based async applications......
+
+Rxjs core Concept:
+
+1.Publisher
+   Publisher is object who publishes the data(events)
+2.Subscriber
+   Subscriber is object who listens for the data(events)
+
+Publisher--publishes data(events)------|-------|------Subscriber
+
+3.Operator
+  Operators are apis or methods/functions which are used to create process the stream.
+
+4.Stream
+  flow of data 
+
+Objects In Rxjs:
+
+1.Observable -  Publisher
+
+2.Observer - Listener
+
+3.Subscription - Connection between observable and observer
+
+4.Operators - pure functions that enables functional style 
+
+5.Subject
+  It is equivalent to event emitter and broadcast events to many subscriber
+
+
+What we can stream?
+  we can stream any type of values - numbers,strings,objects,arrays
+
+
+Step:
+1.create Stream
+   -From scratch
+   -Using operators
+
+Any stream can emit three types of events
+1.data event 
+2.error event
+3.complete event
+
+
+
+
+
+
+
+
+
+
+
+
 
 
