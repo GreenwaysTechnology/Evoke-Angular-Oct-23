@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppComponent } from './app.component';
 import { TodoModule } from './todo/todo.module';
 import { PostsModule } from './posts/posts.module';
+import { HttpClientModule } from '@angular/common/http'
 
 @NgModule({
   declarations: [
@@ -12,7 +12,8 @@ import { PostsModule } from './posts/posts.module';
   imports: [
     BrowserModule,
     TodoModule,
-    PostsModule
+    PostsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,7 +1,8 @@
-import { BehaviorSubject } from 'rxjs'
+
+import { Subject } from 'rxjs'
 
 //create Subject 
-const subject = new BehaviorSubject(0);
+const subject = new Subject();
 
 //one to many 
 subject.subscribe({
@@ -14,8 +15,6 @@ subject.subscribe({
         console.log(`Subscriber B's Data ${data}`)
     }
 })
-subject.next(10)
-subject.next(23)
-subject.next(34)
-subject.next(12)
-
+//emission should happen after subscription.
+subject.next(1)
+subject.next(2)

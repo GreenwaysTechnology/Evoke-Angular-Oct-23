@@ -1615,7 +1615,474 @@ Any stream can emit three types of events
 
 
 
+import { Observable } from 'rxjs'
 
+//create stream from scratch
+
+//publisher
+const observable = new Observable(subscriber => {
+    subscriber.next(1) //emit data event
+    subscriber.next(2) //emit data event
+    subscriber.next(3) //emit data event
+    subscriber.error('something went wrong') // after error also nothing will be emitted
+    subscriber.next(4) //emit data event
+    subscriber.complete() //emit complete event 
+    subscriber.next(5)  //after complete you will not get data
+})
+
+//subscribers
+observable.subscribe({
+    next(data) {
+        console.log(`got value ${data}`)
+    },
+    error(err){
+        console.log(err)
+    },
+    complete(){
+        console.log('stream is completed')
+    }
+})
+
+.................................................................................
+			 Types of operators
+..................................................................................
+
+1.creation operators
+2.transformation operator
+3.filtering operators
+4.joining operators
+5.Error handling opertors
+etc....
+
+1.creation operators:
+  It can be used to create an Observable with some predefiend behaviour...
+
+from
+of
+range
+timer
+fromEvent
+generate
+etc...
+
+in order to understand operators how it works, we can look at marble diagram...
+https://rxmarbles.com
+
+of:
+ emitting sequence of values
+
+
+import { of } from 'rxjs'
+
+of(1, 2, 3, 4, 5, 6).subscribe({
+    next(data) {
+        console.log(`got value ${data}`)
+    },
+    error(err) {
+        console.log(err)
+    },
+    complete() {
+        console.log('stream is completed')
+    }
+})
+
+of([1, 2, 3, 4, 5, 6]).subscribe({
+    next(data) {
+        console.log(`got value ${data}`)
+    },
+    error(err) {
+        console.log(err)
+    },
+    complete() {
+        console.log('stream is completed')
+    }
+})
+.........
+from:
+ create observable from an Array, an array-like objects, an iterable object...
+
+
+import { from } from 'rxjs'
+
+
+from([1, 2, 3, 4, 5, 6]).subscribe({
+    next(data) {
+        console.log(`got value ${data}`)
+    },
+    error(err) {
+        console.log(err)
+    },
+    complete() {
+        console.log('stream is completed')
+    }
+})
+
+range:
+ what if i want numbers from 0 to 100.
+
+import { range } from 'rxjs'
+
+
+range(0,100).subscribe({
+    next(data) {
+        console.log(`got value ${data}`)
+    },
+    error(err) {
+        console.log(err)
+    },
+    complete() {
+        console.log('stream is completed')
+    }
+})
+...
+
+Types of streams:
+
+1.finite streams-  stream will be completed.
+2.infinite streams - stream never ends...
+
+infinite stream:
+ interval -  generates sequence of numbers once it starts based on some interval...
+
+import { interval } from 'rxjs'
+
+
+interval(1000).subscribe({
+    next(data) {
+        console.log(`got value ${data}`)
+    },
+    error(err) {
+        console.log(err)
+    },
+    complete() {
+        console.log('stream is completed')
+    }
+})
+...................................................................................				 Stream Processing - transformation
+...................................................................................
+Transformation operators converts incoming data into some other format..
+
+map:
+ It applies a given project function to each value emitted by the source observable,returns resulting values as an new observable.
+
+any stream processing operators if you want to attach, you have to use method called pipe
+
+observable.pipe(op1,op2,op3,op4,op5,op6).subscribe()
+
+
+import { map, range } from 'rxjs'
+
+//emit values after doubling : double the number
+//range(1,10).map()
+
+range(0, 100).pipe(
+    map(value => value * 2),
+    map(x => x * 10)
+).subscribe({
+    next(data) {
+        console.log(`got value ${data}`)
+    },
+    error(err) {
+        console.log(err)
+    },
+    complete() {
+        console.log('stream is completed')
+    }
+})
+
+Filtering operators:
+ Note : filtering operators works based on booleans;
+ downstream gets data only if upstream returns true...
+if upstream returns false for that data , that data will be droped.
+
+
+import { filter,  map, range, take } from 'rxjs'
+
+range(0, 100).pipe(
+    filter(x => x > 10),
+    filter(x => x % 2 === 0),
+    take(10)
+).subscribe({
+    next(data) {
+        console.log(`got value ${data}`)
+    },
+    error(err) {
+        console.log(err)
+    },
+    complete() {
+        console.log('stream is completed')
+    }
+})
+..................................................................................
+			 Subjects
+.................................................................................
+
+Types of Observables
+
+1.cold observable -  one to one - one to many 
+2.hot observable  - one to many
+
+What is subject?
+ Hot observable , one to many -  broadcasting...
+
+Types of Subjects:
+
+1.Subject
+2.BehaviorSubject
+3.ReplySubject
+4.AsyncSubject
+5.VoidSubject
+
+Subject:
+
+import { Subject, from, interval } from 'rxjs'
+
+//create Subject 
+const subject = new Subject();
+
+//one to many 
+subject.subscribe({
+    next(data) {
+        console.log(`Subscriber A's Data ${data}`)
+    }
+})
+setTimeout(() => {
+    subject.subscribe({
+        next(data) {
+            console.log(`Subscriber B's Data ${data}`)
+        }
+    })
+}, 5000)
+setTimeout(() => {
+    subject.subscribe({
+        next(data) {
+            console.log(`Subscriber C's Data ${data}`)
+        }
+    })
+}, 10000)
+//emission should happen after subscription.
+//if you want to emit values from the observable via subject 
+
+const observable = interval(1000)
+observable.subscribe(subject)
+
+BehaviorSubject:
+
+ It is one the variants of Subject, which has the notation of "the current value".
+It stores the lastest value emitted to its consumers.
+BehaviorSubject has inital value.
+
+import { BehaviorSubject } from 'rxjs'
+
+//create Subject 
+const subject = new BehaviorSubject(0);
+
+//one to many 
+subject.subscribe({
+    next(data) {
+        console.log(`Subscriber A's Data ${data}`)
+    }
+})
+subject.subscribe({
+    next(data) {
+        console.log(`Subscriber B's Data ${data}`)
+    }
+})
+subject.next(10)
+subject.next(23)
+subject.next(34)
+subject.next(12)
+
+Angular and Rxjs:
+import { Injectable } from '@angular/core';
+import { POSTS } from './post.mock';
+import { Post } from './post.type';
+import { Observable, of } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PostsService {
+
+  constructor() { }
+
+  public findAll(): Observable<Post[]> {
+    return of(POSTS)
+  }
+
+}
+import { Component } from '@angular/core';
+import { PostsService } from './posts.service';
+import { Post } from './post.type';
+import { Observable } from 'rxjs';
+
+@Component({
+  selector: 'app-posts',
+  templateUrl: './posts.component.html',
+  styleUrls: ['./posts.component.css']
+})
+export class PostsComponent {
+  posts!: Post[]
+  
+  constructor(private postService: PostsService) { }
+  ngOnInit() {
+    
+    this.postService.findAll().subscribe({
+      next: posts => {
+        this.posts = posts
+      }
+    })
+
+  }
+  ngOnDestroy() {
+    console.log('Destory is called')
+  }
+}
+.....................................................................................
+			Connecting to REST API
+.....................................................................................
+			
+Most of the front end applications need to communicate with a server over http protocal to download and upload data and access the back end services.
+
+Angular provides a client HTTP api called "HttpClient" built in service class..
+
+HttpClient service class has been listed in the module "@angular/common/http"
+
+HttpClientModule need to injected into submodule where ever you want to write http communication.
+
+HttpClient service is powered with rxjs observable...
+
+Steps:
+1.Make sure that you have rest api
+ i am going to use fake api called "jsonplaceholder.com"
+
+2.Inject HttpClientModule
+
+src/posts/post.module.ts
+
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { PostsComponent } from './posts.component';
+import { HttpClientModule } from '@angular/common/http'
+
+@NgModule({
+  declarations: [
+    PostsComponent
+  ],
+  imports: [
+    CommonModule, HttpClientModule
+  ],
+  exports: [
+    PostsComponent
+  ]
+})
+export class PostsModule { }
+
+or 
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
+import { TodoModule } from './todo/todo.module';
+import { PostsModule } from './posts/posts.module';
+import { HttpClientModule } from '@angular/common/http'
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    TodoModule,
+    PostsModule,
+    HttpClientModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+step 3:
+
+
+Inject HttpClient Service object  into PostService as dependency..
+
+	Performs HTTP requests. This service is available as an injectable class, with methods to perform HTTP requests. Each request method has multiple signatures, and the return type varies based on the signature that is called (mainly the values of observe and responseType).
+
+import { Injectable } from '@angular/core';
+import { POSTS } from './post.mock';
+import { Post } from './post.type';
+import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http'
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PostsService {
+
+  constructor(private http: HttpClient) { }
+
+  public findAll(): Observable<Post[]> {
+    return this.http.get<Post[]>('https://jsonplaceholder.typicode.com/posts')
+  }
+}
+....................................................................................
+			How to handle http errors
+....................................................................................
+It is common when we write http code there could be errors.
+Instead of throwing errors to the UI, we need to convert into meaningfull response, so that app never crashes.
+
+Rxjs provides an operator to do that.
+
+catchError
+import { Injectable } from '@angular/core';
+import { POSTS } from './post.mock';
+import { Post } from './post.type';
+import { Observable, catchError, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http'
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PostsService {
+
+  constructor(private http: HttpClient) { }
+
+  //blocking api
+  // public findAll(): Post[] {
+  //   return POSTS
+  // }
+  //non blocking api using timer
+  // public findAll(callback: Function) {
+  //   setTimeout(callback, 5000, POSTS)
+  // }
+  // public findAll(): Promise<Post[]> {
+  //   return new Promise((resolve, reject) => {
+  //     setTimeout(resolve, 5000, POSTS)
+  //   })
+  // }
+
+  //  public findAll():Observable<Post[]>{
+  //     return of(POSTS)
+  //  }
+  public findAll(): Observable<Post[]> {
+    return this.http.get<Post[]>('https://jsonplaceholder.typicode.com/post').pipe(
+      catchError(this.handleError<Post[]>('fetch posts...', [
+        { userId: 0, id: 0, title: 'title', body: 'body' }
+      ]))
+    )
+  }
+
+  //Error handler api
+  private handleError<T>(operation = 'operation', result?: T) {
+    //return function 
+    return (error: any): Observable<T> => {
+      console.log(operation, result)
+      return of(result as T)
+    }
+  }
+
+}
 
 
 

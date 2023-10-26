@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { PostsService } from './posts.service';
 import { Post } from './post.type';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-posts',
@@ -9,6 +10,7 @@ import { Post } from './post.type';
 })
 export class PostsComponent {
   posts!: Post[]
+  // posts!:Observable<Post[]>
   constructor(private postService: PostsService) { }
   async ngOnInit() {
     // this.posts = this.postService.findAll()
@@ -20,12 +22,22 @@ export class PostsComponent {
     // }).catch(err => {
     //   console.log(err)
     // })
-    try {
-      this.posts = await this.postService.findAll()
-    }
-    catch(err){
-      console.log(err)
-    }
+    // try {
+    //   this.posts = await this.postService.findAll()
+    // }
+    // catch(err){
+    //   console.log(err)
+    // }
+
+    this.postService.findAll().subscribe({
+      next: posts => {
+        this.posts = posts
+      },
+      error: err => {
+        console.log(err)
+      }
+    })
+
   }
   ngOnDestroy() {
     console.log('Destory is called')
