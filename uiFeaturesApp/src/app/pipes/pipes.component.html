@@ -1,0 +1,22 @@
+<div>
+    <h1>Upper case {{name | uppercase}}</h1>
+    <h1>lower case {{name | lowercase}}</h1>
+    <h1>Title case {{name | titlecase}}</h1>
+    <hr />
+    <h1>Currency {{price | currency}}</h1>
+    <h1>Currency {{price | currency:'INR'}}</h1>
+    <h1>Currency {{price | currency:'EUR'}}</h1>
+    <hr />
+    <h1>Date {{today | date}}</h1>
+    <h1>Date {{today | date:'dd/MM/yy'}}</h1>
+    <h1>Date {{today | date:'short'}}</h1>
+    <hr />
+    <h1>Percent {{stockvalue | percent}}</h1>
+
+    <hr />
+    <h1>JSON {{customer | json}}</h1>
+    <hr>
+    <ul>
+        <li *ngFor="let post of posts | async">{{post.title}}</li>
+    </ul>
+</div>

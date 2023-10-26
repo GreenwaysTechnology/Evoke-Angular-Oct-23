@@ -2083,8 +2083,123 @@ export class PostsService {
   }
 
 }
+..................................................................................
+			 UI Features
+
+1.Data formating - Pipes
+2.Passing data between compoents - Property binding
+3.Handle to handle events and user input - Event Binding
+4.How to style ui - CSS integrations
+5.HTML Elements enchancements -  Directives
 
 
+Data Formating:
+
+What is Pipe?
+ Pipe is object used for data formating.
+
+eg:
+ uppercase
+ show currency values - $,euro,inr....
+ show date formats - dd/mm/yy ...
+ json format
+ async pipe
+
+Angular provides built in pipes , even you can write your own custom pipes as well.
+
+Syntax:
+ some data | name of pipe
+
+ some data | name of pipe:input
+
+Builtin pipes:
+
+DatePipe: Formats a date value according to locale rules.
+
+UpperCasePipe: Transforms text to all upper case.
+
+LowerCasePipe: Transforms text to all lower case.
+
+CurrencyPipe: Transforms a number to a currency string, formatted according to locale rules.
+
+DecimalPipe: Transforms a number into a string with a decimal point, formatted according to locale rules.
+
+PercentPipe: Transforms a number to a percentage string, formatted according to locale rules.
+
+asyncPipe : to bind list of values async
+   - used to bind observables directly.
+
+JsonPipe: to show object in json format
+
+
+<div>
+    <h1>Upper case {{name | uppercase}}</h1>
+    <h1>lower case {{name | lowercase}}</h1>
+    <h1>Title case {{name | titlecase}}</h1>
+    <hr />
+    <h1>Currency {{price | currency}}</h1>
+    <h1>Currency {{price | currency:'INR'}}</h1>
+    <h1>Currency {{price | currency:'EUR'}}</h1>
+    <hr />
+    <h1>Date {{today | date}}</h1>
+    <h1>Date {{today | date:'dd/MM/yy'}}</h1>
+    <h1>Date {{today | date:'short'}}</h1>
+    <hr />
+    <h1>Percent {{stockvalue | percent}}</h1>
+
+    <hr />
+    <h1>JSON {{customer | json}}</h1>
+    <hr>
+    <ul>
+        <li *ngFor="let post of posts | async">{{post.title}}</li>
+    </ul>
+</div>
+import { Component } from '@angular/core';
+import { Observable, of } from 'rxjs';
+
+const posts = [{
+  "userId": 1,
+  "id": 1,
+  "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+  "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+},
+{
+  "userId": 1,
+  "id": 2,
+  "title": "qui est esse",
+  "body": "est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla"
+}]
+
+@Component({
+  selector: 'app-pipes',
+  templateUrl: './pipes.component.html',
+  styles: [
+  ]
+})
+export class PipesComponent {
+  name: string = "subramanian"
+  price: number = 199232323
+  today: any = new Date()
+  stockvalue: number = 1923
+  customer = {
+    id: 1,
+    name: 'Subramanian',
+    address: {
+      city: 'Coimbatore',
+      state: 'Tamil Nadu',
+      country: 'India'
+    }
+  }
+  posts: Observable<Array<any>> = of(posts)
+  // posts!: Array<any>
+  ngOnInit() {
+    // this.tmpposts.subscribe({
+    //   next: posts => {
+    //     this.posts = posts
+    //   }
+    // })
+  }
+}
 
 
 
