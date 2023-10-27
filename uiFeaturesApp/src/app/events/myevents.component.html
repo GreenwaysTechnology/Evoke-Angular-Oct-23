@@ -1,0 +1,11 @@
+<div>
+    <h1>{{message}}</h1>
+    <button (click)="onSave('Hello')">Click</button>
+</div>
+<div>
+    <h1>User Input</h1>
+    <p>{{txtInput}}</p>
+    <!-- <input (input)="onRead($event)" /> -->
+    <!-- <input (input)="txtInput=$event.target.value" [value]="txtInput"/> -->
+    <input [(ngModel)]="txtInput"/>
+</div>

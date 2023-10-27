@@ -2434,25 +2434,303 @@ export class AttributesComponent {
 			Event Binding and two way data binding
 .....................................................................................
 
+Plain js:
+
+<button onclick="listener()">Click</button>
+
+In Angular , event handling is done using a symbol called ()
+
+<button (NameoftheEvent)="listener()">Click</button>
+<button (click)="listener()">Click</button>
+
+Simple Event Hanlding:
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-myevents',
+  templateUrl: './myevents.component.html',
+  styles: [
+  ]
+})
+export class MyeventsComponent {
+
+  //listener method
+  onSave(){
+    alert('save')
+  }
+}
+
+<div>
+    <button (click)="onSave()">Click</button>
+</div>
+
+How to pass input to the listener?
+
+<div>
+    <button (click)="onSave('Hello')">Click</button>
+</div>
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-myevents',
+  templateUrl: './myevents.component.html',
+  styles: [
+  ]
+})
+export class MyeventsComponent {
+
+  //listener method
+  onSave(data:any){
+    alert(data)
+  }
+}
+..
+How to update ui with data when we click button?
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-myevents',
+  templateUrl: './myevents.component.html',
+  styles: [
+  ]
+})
+export class MyeventsComponent {
+  message:string = "..."
+
+  //listener method
+  onSave(data:any){
+    // alert(data)
+    this.message = data
+  }
+}
+<div>
+    <h1>{{message}}</h1>
+    <button (click)="onSave('Hello')">Click</button>
+</div>
+.............................................................................
+How to get input from the user?
+<div>
+    <h1>{{message}}</h1>
+    <button (click)="onSave('Hello')">Click</button>
+</div>
+<div>
+    <h1>User Input</h1>
+    <input (input)="onRead()" />
+</div>
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-myevents',
+  templateUrl: './myevents.component.html',
+  styles: [
+  ]
+})
+export class MyeventsComponent {
+  message:string = "..."
+
+  //listener method
+  onSave(data:any){
+    // alert(data)
+    this.message = data
+  }
+  //input
+  onRead(){
+    
+  }
+}
+........................................................................
+How to get input from the user?
+
+You can bind text box with input event
+YOu can read text box value with "$event" Object
+<div>
+        <input (input)="onRead($event)"/>
+</div>
+<div>
+    <h1>{{message}}</h1>
+    <button (click)="onSave('Hello')">Click</button>
+</div>
+<div>
+    <h1>User Input</h1>
+    <p>{{txtInput}}</p>
+    <input (input)="onRead($event)" />
+</div>
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-myevents',
+  templateUrl: './myevents.component.html',
+  styles: [
+  ]
+})
+export class MyeventsComponent {
+  message: string = "..."
+
+  txtInput:string = ""
+
+  //listener method
+  onSave(data: any) {
+    // alert(data)
+    this.message = data
+  }
+  //input
+  onRead(evt: any) {
+    //console.log(evt.target.value)
+    this.txtInput = evt.target.value
+  }
+}
+.................................................................................
+			  Two way data binding
+..................................................................................
+
+Two way data binding:
+......................
+
+Two way data binding is nothing but whenever we change values in the UI via input controls, the associated "variables" will get updated automatically.
+When ever the variable is updated, the UI will rerender automatically.
+
+User-->trigger--input--->listener is called--->|update the variable--->When ever the variable is updated --->UI is rerendered.
+
+How to write two way data binding code in simple way?
+
+Pattern 1: with Listener
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-myevents',
+  templateUrl: './myevents.component.html',
+  styles: [
+  ]
+})
+export class MyeventsComponent {
+  txtInput:string = ""
+  //input
+  onRead(evt: any) {
+    //console.log(evt.target.value)
+    this.txtInput = evt.target.value
+  }
+}
+<div>
+    <h1>User Input</h1>
+    <p>{{txtInput}}</p>
+    <input (input)="onRead($event)" />
+</div>
+
+Pattern 1: without Listener
+
+The below syntax is deprecated, dont use
+
+export class MyeventsComponent {
+
+  greet: string = ""
+  name:string=""
+  city:string="Chennai"
+
+  //Listener
+  onClick() {
+    console.log('button is clicked')
+  }
+  updateGreet(message: any) {
+    this.greet = message
+  }
+  //evt means event object, through which you can access text box value
+  onRead(evt:any) {
+    this.name = evt.target.value
+  }
+}
+<div>
+    <h1>City : {{city}}</h1>
+    <input (input)="city=$event.target.value"/>
+</div>
+
+Pattern 3: Without Listener,without event binding.
+
+<input (input)="city=$event.target.value" [value]="txtValue" />
+          |                                 |
+        event                             Property 
+
+event + property binding [(ngModel)] -Bannana In a Box Notation
+
+    <input [(ngModel)]="txtInput"/>
+
+After this code, you will get error like below
+
+
+Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+  <input [(ngModel)]="txtInput"/>
+              ~~~~~~~~~~~~~~~~~~
+
+Solution:
+  ngModel is object which is not part of "commonmodule"
+
+ngModel is available as part of "@angular/forms"
+
+This need to be injected into module where ever you use ngModel
+
+import { FormsModule } from '@angular/forms';
+
+
+eg:
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MyeventsComponent } from './myevents.component';
+import { FormsModule } from '@angular/forms';
 
 
 
+@NgModule({
+  declarations: [
+    MyeventsComponent
+  ],
+  imports: [
+    CommonModule,FormsModule
+  ],
+  exports: [
+    MyeventsComponent
+  ]
+})
+export class EventsModule { }
 
+<div>
+    <h1>{{message}}</h1>
+    <button (click)="onSave('Hello')">Click</button>
+</div>
+<div>
+    <h1>User Input</h1>
+    <p>{{txtInput}}</p>
+    <!-- <input (input)="onRead($event)" /> -->
+    <!-- <input (input)="txtInput=$event.target.value" [value]="txtInput"/> -->
+    <input [(ngModel)]="txtInput"/>
+</div>
+import { Component } from '@angular/core';
 
+@Component({
+  selector: 'app-myevents',
+  templateUrl: './myevents.component.html',
+  styles: [
+  ]
+})
+export class MyeventsComponent {
+  message: string = "..."
 
+  txtInput:string = ""
 
+  //listener method
+  onSave(data: any) {
+    // alert(data)
+    this.message = data
+  }
+  //input
+  // onRead(evt: any) {
+  //   //console.log(evt.target.value)
+  //   this.txtInput = evt.target.value
+  // }
+}
+.....................................................................................
+			  Event Emitter Pattern - Custom Events
+			  (Share data between child to Parent)
+.....................................................................................
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if you want to send  data from child to service, you should not send directly rather we have to send to Parent , parent will send data to Service.

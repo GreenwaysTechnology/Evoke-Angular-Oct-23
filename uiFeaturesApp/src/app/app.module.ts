@@ -5,7 +5,9 @@ import { AppComponent } from './app.component';
 import { PipesModule } from './pipes/pipes.module';
 import { PropsModule } from './props/props.module';
 import { HttpClientModule } from '@angular/common/http';
-import { AttributesModule } from './attributes/attributes.module'
+import { AttributesModule } from './attributes/attributes.module';
+import { EventsModule } from './events/events.module';
+import { EventemitterModule } from './eventemitter/eventemitter.module'
 
 @NgModule({
   declarations: [
@@ -16,7 +18,9 @@ import { AttributesModule } from './attributes/attributes.module'
     BrowserModule,
     PipesModule,
     PropsModule,
-    AttributesModule
+    AttributesModule,
+    EventsModule,
+    EventemitterModule
   ],
   providers: [],
   bootstrap: [AppComponent]
