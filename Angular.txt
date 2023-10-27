@@ -2200,6 +2200,254 @@ export class PipesComponent {
     // })
   }
 }
+...................................................................................
+			    Data Sharing Patterns
+...................................................................................
+
+1.Parent to child - Props/Property pattern
+2.child to parent - Event Emitter Pattern
+3.across the application - Services
+
+
+Property Pattern:
+
+Why Property Pattern?
+  A component should not hold data and ui. 
+  User interface must be separated from data.
+
+Parent and Child relationship can be seen using "Angular Dev tool"
+
+...................................................................................
+				Props Pattern
+...................................................................................
+
+Passing data from the parent to child
+
+[] - syntax to pass data
+
+Step:
+1.Pass data to child from parent
+
+parent template
+
+ <app-child [propName]="PropValue" ></app-child>
+
+ProName is just variable
+
+propValue can be any value from primitives to objects, array
+
+propValue can be instance variable of Parent compoent
+
+ <app-hello [title]="title" ></app-hello>
+
+eg:
+
+parent Compoent
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-todosparent',
+  templateUrl: './todosparent.component.html',
+  styles: [
+  ]
+})
+export class TodosparentComponent {
+  title: string = "Todo App"
+}
+
+parent component template
+<app-todoschild [title]="title" ></app-todoschild>
+
+
+2.Child component need to read data
+
+Angular provides a decorator to read prop values
+
+@Input
+
+
+Child Component
+
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-todoschild',
+  templateUrl: './todoschild.component.html',
+  styles: [
+  ]
+})
+export class TodoschildComponent {
+  @Input()
+  title!:string
+}
+
+Child Component Template:
+<h1>Todo Child</h1>
+<p>{{title}}</p>
+........................
+
+service-parent-child:
+.....................
+
+export class Todo {
+    userId!:number
+    id!:number
+    title!:string 
+    completed!:boolean 
+}
+
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http'
+import { Observable, catchError, of } from 'rxjs'
+import { Todo } from './todo.type';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class TodoService {
+
+  constructor(private http: HttpClient) { }
+
+  findAll(): Observable<Todo[]> {
+    //talk to back end service
+    const url = 'https://jsonplaceholder.typicode.com/todos'
+    return this.http.get<Todo[]>(url).pipe(
+      catchError(this.handleError<Todo[]>('fetchTodos', [{ userId: 1, id: 1, title: 'todo', completed: false }]))
+    )
+  }
+  //private method
+  //handle error Api
+  private handleError<T>(operation = 'operation', result?: T) {
+    //return function
+    return (error: any): Observable<T> => {
+      console.log(error)
+      return of(result as T)
+    }
+  }
+}
+
+Parent:
+import { Component } from '@angular/core';
+import { TodoService } from './todo.service';
+import { Todo } from './todo.type';
+
+@Component({
+  selector: 'app-todosparent',
+  templateUrl: './todosparent.component.html',
+  styles: [
+  ]
+})
+export class TodosparentComponent {
+  title: string = "Todo App"
+  todos!: Array<Todo>
+  constructor(private todoService: TodoService) { }
+  ngOnInit() {
+    this.todoService.findAll().subscribe({
+      next: todos => {
+        this.todos = todos;
+      }
+    })
+  }
+}
+
+<app-todoschild [title]="title" [todos]="todos" ></app-todoschild>
+
+Child:
+import { Component, Input } from '@angular/core';
+import { Todo } from './todo.type';
+
+@Component({
+  selector: 'app-todoschild',
+  templateUrl: './todoschild.component.html',
+  styles: [
+  ]
+})
+export class TodoschildComponent {
+  @Input()
+  title!:string
+  @Input()
+  todos!:Array<Todo>
+}
+<h1>Todo Child</h1>
+<p>{{title}}</p>
+<div>
+    <div *ngFor="let todo of todos">
+        <h3>User Id : {{todo.userId}} Id : {{todo.id}}</h3>
+        <p>Title {{todo.title}} Status : {{todo.completed ? "completed": "Not Completed"}}</p>
+    </div>
+</div>
+...................................................................................
+			Attribute Binding
+...................................................................................
+
+Attribute binding is similar to props binding.
+
+Attribute binding is used with "HTML elements" where as props binding used with components
+
+<img src="favicon.ico" />
+      |         |
+   attribute   attribute value.
+
+Here we bind image with src attribute, the image what we have assinged cant be changed once it is rendered. - static attributes
+
+What if i want to change the image(attribute value) dynamically?
+  Attribute binding comes into picture..
+
+<img [src]="variable" />
+      |         |
+   attribute   variable holding attribute value.
+
+eg:
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-attributes',
+  templateUrl: './attributes.component.html',
+  styles: [
+  ]
+})
+export class AttributesComponent {
+  logo: string = "favicon.ico"
+  isEnabled:boolean = true
+  isHidden:boolean = false 
+}
+
+<div>
+    <h1>Static Attribute</h1>
+    <img src="favicon.ico" />
+</div>
+<div>
+    <h1>Dynamic attribute</h1>
+    <img [src]="logo"/>
+</div>
+<div>
+    <h1>Enable and disable</h1>
+    <button [disabled]="isEnabled">Welcome</button>
+</div>
+<div>
+    <h1>Hide and SHow</h1>
+   <span [hidden]="isHidden">Hello</span>
+</div>
+.....................................................................................
+			Event Binding and two way data binding
+.....................................................................................
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

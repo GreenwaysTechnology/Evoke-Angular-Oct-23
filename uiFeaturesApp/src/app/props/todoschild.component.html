@@ -1,0 +1,8 @@
+<h1>Todo Child</h1>
+<p>{{title}}</p>
+<div>
+    <div *ngFor="let todo of todos">
+        <h3>User Id : {{todo.userId}} Id : {{todo.id}}</h3>
+        <p>Title {{todo.title}} Status : {{todo.completed ? "completed": "Not Completed"}}</p>
+    </div>
+</div>
