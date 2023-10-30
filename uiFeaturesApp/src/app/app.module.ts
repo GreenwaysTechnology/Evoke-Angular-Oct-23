@@ -13,6 +13,9 @@ import { IfComponent } from './sdirectives/if.component';
 import { ProgressbarComponent } from './sdirectives/progressbar.component';
 import { SwitchcaseComponent } from './sdirectives/switchcase.component'
 import { FormsModule } from '@angular/forms';
+import { AdirectivesModule } from './adirectives/adirectives.module';
+import { TemplaterefvariableModule } from './templaterefvariable/templaterefvariable.module';
+import { ContentprojectionModule } from './contentprojection/contentprojection.module';
 
 @NgModule({
   declarations: [
@@ -30,7 +33,10 @@ import { FormsModule } from '@angular/forms';
     EventsModule,
     FormsModule,
     EventemitterModule,
-    SdirectivesModule
+    SdirectivesModule,
+    AdirectivesModule,
+    TemplaterefvariableModule,
+    ContentprojectionModule
   ],
   providers: [],
   bootstrap: [AppComponent],

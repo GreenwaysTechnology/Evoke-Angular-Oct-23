@@ -1,0 +1,16 @@
+<div>
+    <input #phone  placeholder="phone number"/>
+    <button (click)="callPhone(phone.value)">Call</button>
+    <h1>Your No {{phoneNo}}</h1>
+</div>
+
+<div>
+    <form #itemForm="ngForm" (ngSubmit)="onSubmit(itemForm)">
+        <label for="name">Name</label>
+        <input type="text" id="name" class="form-control" name="name" ngModel required>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+<div [hidden]="!itemForm.form.valid">
+    <p>{{"Form Submitted"}}</p>
+</div>

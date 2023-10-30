@@ -3008,15 +3008,365 @@ export class SwitchcaseComponent {
 }
 ..................................................................................
 			Attribute Directive
-..................................................................................
+..................................................................................	
+
+ Adding extra behaviour to existing dom elements.
+
+eg:
+ <div subu="">
+
+How to create our own attribute directive.
+
+Step 1:
+
+import { Directive } from '@angular/core';
+
+@Directive({
+  selector: '[appHighlight]'
+})
+export class HighlightDirective {
+
+  constructor() { 
+    console.log('directive is loaded')
+  }
+
+}
+
+2.Test directive is working or not
+
+    <h2 appHighlight >High light me</h2>
+
+DOM Maniupulation:
+
+Access Object , change its values
+
+ h2------Object---->change its value
+
+Using js you change it.
+
+ var element = document.getElementByid('xxx')
+
+DOM ACCESS INSIDE ANGULAR;
+
+1.INSIDE Directive
+  using "ElementRef" -Object
+
+this.element.nativeElement.style.backgroundColor = "yellow";
+
+Component(Directive) Life Cycle methods:
+
+Component initalization from scrach
+
+-->behind the scene (angular di system)
+ 
+ declartions:[HighLightDirective]--di reads this
+		-->di starts creating object
+			new HighLightDirective()--constructor runs
+ Objective of constructor is to create object only.
+
+After constructor completes 
+   Object is ready.
+
+After that we can do heavy resource intialization tasks.
+  -Ajax calls
+  -web socket calls
+  -Timers 
+  -side effects 
+
+dont write code inside constructors, but it works, this might delay object creations.
+
+Why constructors:
+
+  -Only for dependency grabbing.
+
+
+where we have to write resource intialization tasks.
+
+inside lifecycle methods
+
+->all life cycle methods availbale inside interfaces.
+
+Dynamic highlights : Javascript Event Handling :
+
+import { Directive, ElementRef, HostListener } from '@angular/core';
+
+@Directive({
+  selector: '[appHighlight]'
+})
+export class HighlightDirective {
+
+  constructor(private element: ElementRef) { }
+  ngOnInit() {
+    this.hightLight('yellow')
+  }
+
+  @HostListener('mouseenter')
+  public onMouseMove() {
+    this.element.nativeElement.style.fontSize ='x-large'
+     this.hightLight('lightblue')
+  }
+  @HostListener('mouseleave')
+  public onMouseLeave() {
+    this.hightLight('yellow')
+  }
+  private hightLight(color: string) {
+    this.element.nativeElement.style.backgroundColor = color
+  }
+
+}
+
+How to pass dynamic property to directives?
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-highlight',
+  templateUrl: './highlight.component.html',
+  styles: [
+  ]
+})
+export class HighlightComponent {
+  color: string = 'red'
+}
+<h1 [appHighlight]="'pink'">HighLight</h1>
+<h1 [appHighlight]="color">HighLight</h1>
+
+import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+
+@Directive({
+  selector: '[appHighlight]'
+})
+export class HighlightDirective {
+
+  @Input()
+  appHighlight!: string;
+  constructor(private element: ElementRef) { }
+  ngOnInit() {
+    this.hightLight(this.appHighlight || 'yellow')
+  }
+
+  @HostListener('mouseenter')
+  public onMouseMove() {
+    this.element.nativeElement.style.fontSize ='x-large'
+     this.hightLight('lightblue')
+  }
+  @HostListener('mouseleave')
+  public onMouseLeave() {
+    this.hightLight('yellow')
+  }
+  private hightLight(color: string) {
+    this.element.nativeElement.style.backgroundColor = color
+  }
+
+}
+.....................................................................................
+			 Template reference variable
+.....................................................................................
+
+As of now , we have seen many notations like 
+ [property]
+ (click)
+ *ngFor - directive
+ [(ngModel)] - two way data bining
+ # -temlate reference variable
+
+Template variables help you use data from one part of a template in another part of the template.
+Template reference variables are used inside forms heavly.
+
+=>A DOM element within a template
+=>A Directive or Component
+=>A TemplateRef from an ng-template
+=>Inside webcompoent.
+
+Syntax:
+ <input #variableName />
+
+  Here #variableName is template reference variable which points the object -input
+
+
+eg:
+<div>
+    <input #phone  placeholder="phone number"/>
+    <button (click)="callPhone(phone.value)">Call</button>
+    <h1>Your No {{phoneNo}}</h1>
+</div>
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-templaterefvariable',
+  templateUrl: './templaterefvariable.component.html',
+  styles: [
+  ]
+})
+export class TemplaterefvariableComponent {
+  phoneNo!: any
+  callPhone(value: any) {
+    this.phoneNo = value
+  }
+}
 
 
 
+eg:
+
+<div>
+    <form #itemForm="ngForm" (ngSubmit)="onSubmit(itemForm)">
+        <label for="name">Name</label>
+        <input type="text" id="name" class="form-control" name="name" ngModel required>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+<div [hidden]="!itemForm.form.valid">
+    <p>{{"Form Submitted"}}</p>
+</div>
+
+import { Component } from '@angular/core';
+import { NgForm } from '@angular/forms';
+
+@Component({
+  selector: 'app-templaterefvariable',
+  templateUrl: './templaterefvariable.component.html',
+  styles: [
+  ]
+})
+export class TemplaterefvariableComponent {
+  onSubmit(form: NgForm) {
+    console.log(form)
+  }
+  phoneNo!: any
+  callPhone(value: any) {
+    this.phoneNo = value
+  }
+}
+...................................................................................
+			Content Projection -Component as prop
+...................................................................................
+
+<app-root/> - self closing means the component has no any child
+
+<app-container>
+   ? ----------->passing component as child
+</app-container>
+
+<app-header>
+  <app-title/>
+</app-header>
+
+<ng-content> -slot
+...
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-contentprojection',
+  templateUrl: './contentprojection.component.html',
+  styles: [
+  ]
+})
+export class ContentprojectionComponent {
+
+}
+<app-appheader> 
+  <app-apptitle/>
+</app-appheader>
+...
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-appheader',
+  templateUrl: './appheader.component.html',
+  styles: [
+  ]
+})
+export class AppheaderComponent {
+
+}
+<div>
+    <ng-content></ng-content>
+</div>
+....................................................................................
+			Standalone components,pipes,directives,App
+...................................................................................
+Standalone apps,components provide a simlified way to build angular apps.
+In order to streamlne the authoring expreience by reducing the need for "NgModules"..
+
+you dont need to inject any thing into modules, if any existing legacy modules can be used with in app directly....
+
+How to create app standalone?
+
+ng new standaloneApp --standalone
 
 
+App Structure:
 
+main.ts
 
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { AppComponent } from './app/app.component';
 
+bootstrapApplication(AppComponent, appConfig)
+  .catch((err) => console.error(err));
 
+.........................
+
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { GreeterComponent } from './greeter/greeter.component';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule,GreeterComponent],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'standaloneApp';
+}
+<div>
+  <h1>StandAlone Apps!</h1>
+  <app-greeter></app-greeter>
+</div>
+
+import { Component } from '@angular/core';
+
+@Component({
+    selector: 'app-greeter',
+    standalone: true,
+    imports: [],
+    template: `
+      <h1>Greeter </h1>
+    `,
+
+})
+export class GreeterComponent {
+
+}
+
+FormsModule:
+import { Component } from '@angular/core';
+import { GreeterService } from './greeter.service';
+import { FormsModule } from '@angular/forms';
+
+@Component({
+    selector: 'app-greeter',
+    standalone: true,
+    imports: [FormsModule],
+    template: `
+     <input [(ngModel)]="name" />
+      <h1> {{message}} {{name}} </h1>
+    `,
+
+})
+export class GreeterComponent {
+    message!: string
+    name!: string
+    constructor(private greeterService: GreeterService) { }
+    ngOnInit() {
+        this.message = this.greeterService.sayGreet()
+    }
+}
 
 
