@@ -1,0 +1,10 @@
+<div *ngIf="laoder;else showtodos">
+    <h1>{{status}}</h1>
+</div>
+<ng-template #showtodos>
+    <ul>
+        <li *ngFor="let todo of todos">
+            <span>{{todo.title}}</span>
+        </li>
+    </ul>
+</ng-template>

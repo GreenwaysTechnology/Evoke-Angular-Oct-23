@@ -1,0 +1,12 @@
+<div>
+    <input [(ngModel)]="num" />
+    <div [ngSwitch]="num">
+        <div *ngSwitchCase="0">Zero</div>
+        <div *ngSwitchCase="1">One</div>
+        <div *ngSwitchCase="2">Two</div>
+        <div *ngSwitchCase="3">Three</div>
+        <div *ngSwitchCase="4">Four</div>
+        <div *ngSwitchCase="5">Five</div>
+        <div *ngSwitchDefault>No Match Found</div>
+    </div>
+</div>

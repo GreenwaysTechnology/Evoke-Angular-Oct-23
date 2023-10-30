@@ -7,11 +7,19 @@ import { PropsModule } from './props/props.module';
 import { HttpClientModule } from '@angular/common/http';
 import { AttributesModule } from './attributes/attributes.module';
 import { EventsModule } from './events/events.module';
-import { EventemitterModule } from './eventemitter/eventemitter.module'
+import { EventemitterModule } from './eventemitter/eventemitter.module';
+import { SdirectivesModule } from './sdirectives/sdirectives.module';
+import { IfComponent } from './sdirectives/if.component';
+import { ProgressbarComponent } from './sdirectives/progressbar.component';
+import { SwitchcaseComponent } from './sdirectives/switchcase.component'
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    IfComponent,
+    ProgressbarComponent,
+    SwitchcaseComponent
   ],
   imports: [
     HttpClientModule,
@@ -20,9 +28,16 @@ import { EventemitterModule } from './eventemitter/eventemitter.module'
     PropsModule,
     AttributesModule,
     EventsModule,
-    EventemitterModule
+    FormsModule,
+    EventemitterModule,
+    SdirectivesModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  exports: [
+    IfComponent,
+    ProgressbarComponent,
+    SwitchcaseComponent
+  ]
 })
 export class AppModule { }

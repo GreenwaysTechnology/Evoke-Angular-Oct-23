@@ -2088,7 +2088,7 @@ export class PostsService {
 
 1.Data formating - Pipes
 2.Passing data between compoents - Property binding
-3.Handle to handle events and user input - Event Binding
+3.How to handle events and user input - Event Binding
 4.How to style ui - CSS integrations
 5.HTML Elements enchancements -  Directives
 
@@ -2734,3 +2734,289 @@ export class MyeventsComponent {
 .....................................................................................
 
 if you want to send  data from child to service, you should not send directly rather we have to send to Parent , parent will send data to Service.
+
+1.Child Component
+
+1.We need to create EventEmitter object
+ @Output()
+  onTodoSendRequest = new EventEmitter<Todo>
+
+ here 
+   onTodoSendRequest is Name of the Event- Custom Event
+  EventEmitter is Object used to broadcast/send data to the Parent 
+  @Output is used to send data to the Parent where ever the event attached.
+
+Child :
+import { Component, EventEmitter, Output } from '@angular/core';
+import { Todo } from '../props/todo.type';
+
+@Component({
+  selector: 'app-todochild',
+  templateUrl: './todochild.component.html',
+  styles: [
+  ]
+})
+export class TodochildComponent {
+  //event Emitter Object
+  @Output()
+  onTodoSendRequest = new EventEmitter<Todo>
+
+  //button listener to send todo to parent
+  onSendTodo(){
+    let todo:Todo = {
+      userId:10000,
+      id:33333,
+      title:'Learn Angular',
+      completed:false
+    }
+    this.onTodoSendRequest.emit(todo);
+  }
+}
+
+Step 2: Parent Component : we listen for event called "onTodoSendRequest"
+
+import { Component, EventEmitter, Output } from '@angular/core';
+import { Todo } from '../props/todo.type';
+import { TodoService } from './todo.service';
+
+@Component({
+  selector: 'app-todoparent',
+  templateUrl: './todoparent.component.html',
+  styles: [
+  ]
+})
+export class TodoparentComponent {
+
+  constructor(private todoService:TodoService){}
+  
+   todo!:Todo
+
+  //Listener listens for child events
+  public getTodo(evt:Todo){
+     console.log(evt)
+     this.todo = evt
+     this.todoService.save(this.todo);
+  }
+}
+
+Step 3: Service class:
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http'
+import { Observable, catchError, of } from 'rxjs'
+import { Todo } from '../props/todo.type';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class TodoService {
+
+  constructor(private http: HttpClient) { }
+
+  findAll(): Observable<Todo[]> {
+    //talk to back end service
+    const url = 'https://jsonplaceholder.typicode.com/todos'
+    return this.http.get<Todo[]>(url).pipe(
+      catchError(this.handleError<Todo[]>('fetchTodos', [{ userId: 1, id: 1, title: 'todo', completed: false }]))
+    )
+  }
+
+  save(todo: Todo) {
+    console.log('save method is called')
+    console.log(todo);
+  }
+
+  //private method
+  //handle error Api
+  private handleError<T>(operation = 'operation', result?: T) {
+    //return function
+    return (error: any): Observable<T> => {
+      console.log(error)
+      return of(result as T)
+    }
+  }
+}
+....................................................................................
+			 css Integration
+....................................................................................
+
+Types of css :
+
+1.Global css
+  ->You can add application css 
+  ->You can use third party css frameworks like bootstrap..
+2.Component level css.
+
+
+styles.css
+/* You can add global styles to this file, and also import other style files */
+body {
+    background-color: lightblue;
+}
+
+h1 {
+    color: white;
+    text-align: center;
+}
+
+p {
+    font-family: verdana;
+    font-size: 20px;
+}
+
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-eventemitter',
+  templateUrl: './eventemitter.component.html',
+  styles: [`
+    h1 {
+      color: red;
+      text-align: center;
+    }
+  `]
+})
+export class EventemitterComponent {
+
+}
+....................................................................................
+			Directives
+....................................................................................
+
+Directives:
+ Directive is custom element or attribute.
+
+Types of directives
+1.template directive
+2.Structural directive
+3.attribute directive
+
+1.Template directive:
+  The template directive is nothing but directive with template.
+Every component is part of Template directive.
+eg:
+ <app-root> <app-profile>
+
+2.Structural directive
+
+ It is one of the special attribute directive.
+All structural directives starts with "*" notation.
+
+Structural directives change the dom layout by adding or removing elements- dom processing.
+
+Common Structural directives:
+
+1.*ngFor - for loop
+2.*ngIf - if condition
+3.*ngSwitch -  switch
+
+1.*ngIf -  if condition inside template.
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-if',
+  templateUrl: './if.component.html',
+  styles: [
+  ]
+})
+export class IfComponent {
+  isHidden: boolean = true
+}
+<h1>*ngIf</h1>
+<div *ngIf="isHidden">
+    <h1>Hello</h1>
+</div>
+<button (click)="isHidden=!isHidden" class="btn btn-success">Toggle</button>
+.................................................................................
+
+*ngIf...else:
+............. 
+
+Use case : Progress bar.
+
+<div *ngIf="laoder;else showtodos">
+    <h1>{{status}}</h1>
+</div>
+<ng-template #showtodos>
+    <ul>
+        <li *ngFor="let todo of todos">
+            <span>{{todo.title}}</span>
+        </li>
+    </ul>
+</ng-template>
+
+import { Component } from '@angular/core';
+import { TodoService } from './todo.service';
+
+@Component({
+  selector: 'app-progressbar',
+  templateUrl: './progressbar.component.html',
+  styles: [
+  ]
+})
+export class ProgressbarComponent {
+  todos!: Array<any>
+  laoder: boolean = true
+  status: string = "loading...."
+
+  constructor(private todoService: TodoService) { }
+  ngOnInit() {
+    this.todoService.findAll().subscribe({
+      next: todos => {
+        setTimeout(() => {
+          this.todos = todos
+          this.laoder = !this.laoder
+        }, 10000);
+      }
+    })
+  }
+}
+....................................................................................
+			 ngSwitch case:
+.....................................................................................
+
+ngSwitch:
+
+<div [ngSwitch]="switchexpression">
+    <ng-template *ngSwitchCase="expression1"></ng-template>
+</div>
+
+eg:
+
+<div>
+    <input [(ngModel)]="num" />
+    <div [ngSwitch]="num">
+        <div *ngSwitchCase="0">Zero</div>
+        <div *ngSwitchCase="1">One</div>
+        <div *ngSwitchCase="2">Two</div>
+        <div *ngSwitchCase="3">Three</div>
+        <div *ngSwitchCase="4">Four</div>
+        <div *ngSwitchCase="5">Five</div>
+        <div *ngSwitchDefault>No Match Found</div>
+    </div>
+</div>
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-switchcase',
+  templateUrl: './switchcase.component.html',
+  styles: [
+  ]
+})
+export class SwitchcaseComponent {
+  num:number =0
+}
+..................................................................................
+			Attribute Directive
+..................................................................................
+
+
+
+
+
+
+
+
+
+
+
