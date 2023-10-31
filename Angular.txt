@@ -3368,5 +3368,359 @@ export class GreeterComponent {
         this.message = this.greeterService.sayGreet()
     }
 }
+....................................................................................
+			HTTPClient Module and standalone compoents
+....................................................................................
+app.config.ts
+import { ApplicationConfig } from '@angular/core';
+import { importProvidersFrom } from "@angular/core";
+import { HttpClientModule } from "@angular/common/http";
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    importProvidersFrom(HttpClientModule)
+  ],
+};
+.....................................................................................
+			 Forms
+.....................................................................................
+
+Forms are used to get input from the User.
+
+Types of Forms
+
+1.Template driven Forms -  Using HTML
+2.Reactive forms -  Via coding
+
+Template Driven forms:
+.......................
+
+=>Build an Angular form with a compoent and template
+=>Use ngModel to create two-way data binding for reading and writing input control values
+=>Provide visual feedback using special css classes that track the state of the control.
+=>Display validation errors to users and conditionally allow input from the form controls based on the form status
+=>Share information across HTML elements using template reference variables
+
+Build a Template driven form
+
+=>Template Driven forms rely on directives defined in the FormsModule.
+
+Directives:
+NgModel
+NgForm
+NgModelGroup
+
+1.bootstrap must have been installed -The Forms internally uses bootstrap template
+
+>npm install bootstrap --save
+
+
+
+Steps:
+
+The sample form in this lesson we are going to build called "Hero Employment Registration form", which is used by the company to maintain about heroes.
+
+
+1.Design Model
+
+app/hero.ts
+
+export class Hero {
+    constructor(public id: number, public name: string, public power: string, public alterEgo: string) { }
+}
+
+2.Design Component that holds Forms
+
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+
+@Component({
+    selector: 'app-hero-form',
+    standalone: true,
+    imports: [CommonModule,FormsModule],
+    templateUrl: './hero-form.component.html',
+    styleUrls: ['./app.component.css']
+})
+export class HeroFormCompoent {
+
+}
+
+3.Create Model object and inital default values
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { Hero } from "./hero";
+
+@Component({
+    selector: 'app-hero-form',
+    standalone: true,
+    imports: [CommonModule, FormsModule],
+    templateUrl: './hero-form.component.html',
+    styleUrls: ['./app.component.css']
+})
+export class HeroFormCompoent {
+    //Create Model class
+    powers = ['Really Smart', 'Super Flexible', 'Supert Hot', 'Weather Chanager'];
+    model = new Hero(1, 'Dr.Strange', this.powers[3], 'Chuck OverStreet')
+
+}
+4.Design Inital form template
+
+4.1.Select control and bind with array.
+<h1 class="h1">Registration</h1>
+<div class="container">
+    <!-- form templates follows boot strap -->
+    <div class="form-group">
+        <label for="power">Hero Power</label>
+        <select class="form-control" id="power" required>
+            <option *ngFor="let pow of powers" [value]="pow">{{pow}}</option>
+        </select>
+    </div>
+</div>
+
+4.2.Declare name input control and bind value
+<h1 class="h1">Registration</h1>
+
+<div class="container">
+    <!-- todo: Remove this once forms are created and tested -->
+    {{model | json}}
+    <!-- form templates follows boot strap -->
+    <form>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" [(ngModel)]="model.name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="alterEgo">Alter Ego</label>
+            <input type="text" class="form-control" id="alterEgo" [(ngModel)]="model.alterEgo" name="alterEgo" required>
+        </div>
+        <div class="form-group">
+            <label for="power">Hero Power</label>
+            <select class="form-control" [(ngModel)]="model.power" name="power" id="power" required>
+                <option *ngFor="let pow of powers" [value]="pow">{{pow}}</option>
+            </select>
+        </div>
+    </form>
+</div>
+....................................................................................
+5.Track states
+5.1.The whole form state
+5.2.The form control state
+
+Form state:
+ Angular applies "ng-submitted" class to form elements after the form has been submitted.
+
+Track Control State:
+ Angular applies css classes according to state of the control.
+
+State 	                        css Class if true   Class if false
+
+The control has been visited.  	  ng-touched 	    ng-untouched
+The control's value has changed.  ng-dirty 	    ng-pristine
+The control's value is valid. 	  ng-valid 	    ng-invalid
+
+You can use theses css classes to define the styles for your control based on its status.
+
+Observe Control states:
+
+To see how the classes are added and removed by the framework, open browsers developer tools and inspect input element that represents hero name;
+
+<input _ngcontent-ng-c389888304="" type="text" id="name" name="name" required="" class="form-control ng-valid ng-touched ng-dirty" ng-reflect-required="" ng-reflect-name="name" ng-reflect-model="Subramanian">
+
+What if i want to see visual feedback for states
+................................................
+
+ng-valid  
+ng-invalid
+
+Name  => valid + required
+AlterEgo => valid + optional
+
+In order to activate we need to override ng-* CSS Classes
+
+styles.css
+/* You can add global styles to this file, and also import other style files */
+.ng-valid[required],
+.ng-valid.required {
+    border-left: 8px solid #42A948;
+}
+
+.ng-invalid:not(form) {
+    border-left: 8px solid #a94442;
+}
+
+Show and Hide validation error Messages:
+........................................
+
+NgModel:
+  It is directive
+
+NgModel is Child Object of FormControl Object
+
+class NgModel extends Input{
+  //extra features : state tracking,enabling validation.
+}
+
+<input #Xx> -Here xx Points only Input
+
+<input #Xx="ngModel"> -Here xx points ngModel
+
+After validation:
+<h1 class="h1">Registration</h1>
+
+<div class="container">
+    <!-- todo: Remove this once forms are created and tested -->
+    {{model | json}}
+    <!-- form templates follows boot strap -->
+    <form>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" #name="ngModel" class="form-control" id="name" [(ngModel)]="model.name" name="name"
+                required>
+        </div>
+        <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+            Name is Required
+        </div>
+        <div class="form-group">
+            <label for="alterEgo">Alter Ego</label>
+            <input type="text" #alterEgo="ngModel" class="form-control" id="alterEgo" [(ngModel)]="model.alterEgo" name="alterEgo" required>
+        </div>
+        <div [hidden]="alterEgo.valid || alterEgo.pristine" class="alert alert-danger">
+            AlterEgo is Required
+        </div>
+        <div class="form-group">
+            <label for="power">Hero Power</label>
+            <select class="form-control" [(ngModel)]="model.power" name="power" id="power" required>
+                <option *ngFor="let pow of powers" [value]="pow">{{pow}}</option>
+            </select>
+        </div>
+    </form>
+</div>
+
+Submit the Form with ngSubmit:
+..............................
+=>Validate the entire form using #heroForm="ngForm"
+
+<h1 class="h1">Registration</h1>
+
+<div class="container">
+    <!-- todo: Remove this once forms are created and tested -->
+    {{model | json}}
+    <!-- form templates follows boot strap -->
+    <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" #name="ngModel" class="form-control" id="name" [(ngModel)]="model.name" name="name"
+                required>
+        </div>
+        <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+            Name is Required
+        </div>
+        <div class="form-group">
+            <label for="alterEgo">Alter Ego</label>
+            <input type="text" #alterEgo="ngModel" class="form-control" id="alterEgo" [(ngModel)]="model.alterEgo"
+                name="alterEgo" required>
+        </div>
+        <div [hidden]="alterEgo.valid || alterEgo.pristine" class="alert alert-danger">
+            AlterEgo is Required
+        </div>
+        <div class="form-group">
+            <label for="power">Hero Power</label>
+            <select class="form-control" [(ngModel)]="model.power" name="power" id="power" required>
+                <option *ngFor="let pow of powers" [value]="pow">{{pow}}</option>
+            </select>
+        </div>
+        <div>
+            <button style="margin-top: 30px;" type="submit" class="btn btn-success"
+                [disabled]="!heroForm.form.valid">Submit</button>
+        </div>
+    </form>
+</div>
+
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { Hero } from "./hero";
+
+@Component({
+    selector: 'app-hero-form',
+    standalone: true,
+    imports: [CommonModule, FormsModule],
+    templateUrl: './hero-form.component.html',
+    styleUrls: ['./app.component.css']
+})
+export class HeroFormCompoent {
+    //Create Model class
+    powers = ['Really Smart', 'Super Flexible', 'Supert Hot', 'Weather Chanager'];
+    model = new Hero(1, 'Dr.Strange', this.powers[3], 'Chuck OverStreet')
+
+    onSubmit() {
+        console.log(this.model)
+    }
+}
+............
+
+Respond to Form Submission:
+
+<div class="container">
+    <!-- todo: Remove this once forms are created and tested -->
+    <!-- {{model | json}} -->
+    <!-- form templates follows boot strap -->
+
+    <div [hidden]="submitted">
+        <h1 class="h1">Registration</h1>
+
+        <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" #name="ngModel" class="form-control" id="name" [(ngModel)]="model.name" name="name"
+                    required>
+            </div>
+            <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+                Name is Required
+            </div>
+            <div class="form-group">
+                <label for="alterEgo">Alter Ego</label>
+                <input type="text" #alterEgo="ngModel" class="form-control" id="alterEgo" [(ngModel)]="model.alterEgo"
+                    name="alterEgo" required>
+            </div>
+            <div [hidden]="alterEgo.valid || alterEgo.pristine" class="alert alert-danger">
+                AlterEgo is Required
+            </div>
+            <div class="form-group">
+                <label for="power">Hero Power</label>
+                <select class="form-control" [(ngModel)]="model.power" name="power" id="power" required>
+                    <option *ngFor="let pow of powers" [value]="pow">{{pow}}</option>
+                </select>
+            </div>
+            <div>
+                <button style="margin-top: 30px;" type="submit" class="btn btn-success"
+                    [disabled]="!heroForm.form.valid">Submit</button>
+            </div>
+        </form>
+    </div>
+    <div [hidden]="!submitted">
+        <h1>You Have submitted the following :</h1>
+        <div class="row">
+            <div class="col-xs-3">Name</div>
+            <div class="col-xs-9">{{model.name}}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">Alter Ego</div>
+            <div class="col-xs-9">{{model.alterEgo}}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">Power</div>
+            <div class="col-xs-9">{{model.power}}</div>
+        </div>
+        <br>
+        <button type="button" (click)="submitted=false" class="btn btn-primary">Edit</button>
+    </div>
+</div>
+
+
+
+
 
 
