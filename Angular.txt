@@ -3719,6 +3719,549 @@ Respond to Form Submission:
     </div>
 </div>
 
+Form Submission:
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { Hero } from "./hero";
+
+@Component({
+    selector: 'app-hero-form',
+    standalone: true,
+    imports: [CommonModule, FormsModule],
+    templateUrl: './hero-form.component.html',
+    styleUrls: ['./app.component.css']
+})
+export class HeroFormCompoent {
+    //Create Model class
+    powers = ['Really Smart', 'Super Flexible', 'Supert Hot', 'Weather Chanager'];
+    model = new Hero(1, 'Dr.Strange', this.powers[3], 'Chuck OverStreet')
+    submitted: boolean = false
+
+    onSubmit() {
+        console.log(this.model)
+        this.submitted = true
+    }
+}
+....................................................................................
+			 Routing And Single Web application
+....................................................................................
+
+
+Routing is a concept through which we can build an called Single Page Web App.
+
+We have lot of web apps
+
+1.static web app
+2.dynamic web app
+3.web services - soap,restfull
+4.SPA
+
+SPA core concepts:
+
+spa is built using "js,css,html5"
+
+js offers browser apis
+-location
+-history
+ objects are used to implement navigation
+
+
+if you want to build spa using frameworks like angular , angular offers a separate module called "RouterModule"
+
+1.page
+  1.physical page - html page/static - index.html
+  2.virtual page - the page created onfly and inserted into pysical page- components/views
+
+
+index.html
+
+ <body>
+    <app-root></app-root>
+ </body>
+
+without spa
+
+ <body>
+    <app-root>
+		<app-users>
+    </app-root>
+ </body>
+
+with spa
+
+ <body>
+    <app-root>
+         <navigation>
+         <page>
+    </app-root>
+ </body>
+
+navigation would html hyper links - menus
+page is component to be rendered based on menuitem
+...................................................................................
+Steps:
+1.create an app with routing support
+ new new  routingApp
+   ? Would you like to add Angular routing? Yes
+
+After creating application.
+
+app.module.ts
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+Here you can note down there is module is added called "AppRoutingModule"
+
+
+src/app/app-routing.module.ts
+
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+
+const routes: Routes = [];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+
+=>AppRoutingModule is submodule to application.
+
+RouterModule:
+............
+ In order to understand how routing works, means navigation works, we need to understand common navigation pattern.
+
+1.Master Navigation
+	Main Menu
+2.Child Navigation
+   Sub Menu
+
+AppRoutingModule describes the navigation rules for "Master Menu"
+
+RouterModule.forRoot(routes)
+  Here forRoot is static method which describes Master Menu.
+
+forRoot takes parameter of "routes" configuration which describe url and its pages.
+
+Directives:
+2.RouterOutlet 
+	Acts as a placeholder that Angular dynamically fills based on the current router state.
+   <router-outlet>
+
+3.RouterLink And RouterLinkActive
+   RouterLink is directive to replace href
+
+.....................................................................................
+Eg:
+ Basic routing, mvc with routing:
+
+app.routing.module
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './home/home.component';
+import { ContactComponent } from './contact/contact.component';
+import { AlbumsComponent } from './albums/albums.component';
+
+const routes: Routes = [
+  {
+    path: 'home', component: HomeComponent
+  },
+  {
+    path: 'contact', component: ContactComponent
+  },
+  {
+    path: "albums", component: AlbumsComponent
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styles: [
+  ]
+})
+export class HomeComponent {
+  constructor() {
+
+  }
+  ngOnInit() {
+    console.log('HomeComponent component is mounted')
+  }
+  ngOnDestroy() {
+    console.log('HomeComponent component unMounted')
+  }
+}
+
+contact component:
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-contact',
+  templateUrl: './contact.component.html',
+  styles: [
+  ]
+})
+export class ContactComponent {
+  constructor() {
+
+  }
+  ngOnInit() {
+    console.log('ContactComponent component is mounted')
+  }
+  ngOnDestroy() {
+    console.log('ContactComponent component unMounted')
+  }
+}
+
+import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AlbumsService } from './albums.service';
+
+@Component({
+  selector: 'app-albums',
+  templateUrl: './albums.component.html',
+  styles: [
+  ]
+})
+export class AlbumsComponent {
+  albums!: Observable<any[]>
+  constructor(private albumService: AlbumsService) { }
+  ngOnInit() {
+    this.albums = this.albumService.findAll();
+  }
+  ngOnDestroy() {
+    // subscribeer.unsubscribe()
+  }
+}
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs'
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AlbumsService {
+
+  constructor(private http: HttpClient) { }
+
+  findAll(): Observable<any[]> {
+    const url = 'https://jsonplaceholder.typicode.com/albums'
+    return this.http.get<any[]>(url);
+  }
+}
+..
+
+app.comonent.html
+<div>
+  <h1>Router App</h1>
+  <nav>
+    <ul>
+      <li><a routerLink="home">Home</a></li>
+      <li><a routerLink="contact">Contact</a></li>
+      <li><a routerLink="albums">Albums</a></li>
+
+    </ul>
+  </nav>
+  <hr>
+  <router-outlet></router-outlet>
+
+</div>
+.....................................................................................
+				Routing patterns
+
+
+1.named route
+ {path:'name'}
+2.index route
+  As soon as web app is lanuched,we need to show some page
+3.parametermized route
+  {path:'albums/:id'}
+4.NotFound Route
+5.Redirections /hello - /greet
+6.Nested routing
+
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './home/home.component';
+import { ContactComponent } from './contact/contact.component';
+import { AlbumsComponent } from './albums/albums.component';
+import { PagenotfoundComponent } from './pagenotfound.component';
+import { AlbumsdetailsComponent } from './albums/albumsdetails.component';
+import { ProductsComponent } from './products/products.component';
+import { BooksComponent } from './products/books.component';
+import { PhonesComponent } from './products/phones.component';
+
+const routes: Routes = [
+  //index route
+  // {
+  //   path: '', component: HomeComponent
+  // },
+  //Index route with redirect
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  {
+    path: 'home', component: HomeComponent
+  },
+  {
+    path: 'contact', component: ContactComponent
+  },
+  { path: 'kidsalbums', redirectTo: '/albums', pathMatch: 'full' },
+  {
+    path: "albums", component: AlbumsComponent
+  },
+  {
+    path: 'albums/:id', component: AlbumsdetailsComponent
+  },
+  {
+    path: "products", component: ProductsComponent,
+    children: [
+      { path: '', redirectTo: '/products/books', pathMatch: 'full' },
+      { path: 'books', component: BooksComponent },
+      { path: 'electronics', component: PhonesComponent }
+    ]
+  },
+  {
+    path: 'pagenotfound', component: PagenotfoundComponent
+  },
+  {
+    path: "**", redirectTo: '/pagenotfound', pathMatch: 'full'
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+
+.....................................................................................
+				Programmetic Routing
+
+Via code you can implement.
+
+Router Object:
+ It is built in object used to navigate to Other Routers
+
+
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styles: [
+  ]
+})
+export class DashboardComponent {
+  constructor(private router: Router) { }
+
+  goToAlbumPage() {
+    this.router.navigate(['albums'])
+  }
+  goToProductsPage() {
+    this.router.navigate(['products'])
+  }
+}
+<div>
+    <button (click)="goToAlbumPage()">Albums</button> &nbsp;
+    <button (click)="goToProductsPage()">Products</button>
+<div>
+.....................................................................................
+			 Lazy loading and modularized routing
+..............................................................................
+How to create a submodule with sub routing module?
+
+ng g m customers --route customers  --module=app
+
+CREATE src/app/customers/customers-routing.module.ts (355 bytes)
+CREATE src/app/customers/customers.module.ts (378 bytes)
+CREATE src/app/customers/customers.component.html (24 bytes)
+CREATE src/app/customers/customers.component.spec.ts (620 bytes)
+CREATE src/app/customers/customers.component.ts (287 bytes)
+CREATE src/app/customers/customers.component.css (0 bytes)
+UPDATE src/app/app-routing.module.ts (1707 bytes)          
+
+ng g m orders --route orders  --module app.module
+CREATE src/app/orders/orders-routing.module.ts (343 bytes)
+CREATE src/app/orders/orders.module.ts (357 bytes)
+CREATE src/app/orders/orders.component.html (21 bytes)
+CREATE src/app/orders/orders.component.spec.ts (599 bytes)
+CREATE src/app/orders/orders.component.ts (275 bytes)
+CREATE src/app/orders/orders.component.css (0 bytes)
+UPDATE src/app/app-routing.module.ts (1809 bytes)
+
+app.routing.module
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { ContactComponent } from './contact/contact.component';
+import { DashboardComponent } from './dashboard.component';
+import { HomeComponent } from './home/home.component';
+import { PagenotfoundComponent } from './pagenotfound.component';
+import { BooksComponent } from './products/books.component';
+import { ElectronicsComponent } from './products/electronics.component';
+import { ProductsComponent } from './products/products.component';
+import { UserComponent } from './users/user.component';
+import { UserlistComponent } from './users/userlist.component';
+
+//routing rules: routing configuration/
+//when i click particular menu, which compoent should be displayed
+const routes: Routes = [
+  {
+    path: 'home', component: HomeComponent
+  },
+  {
+    path: 'contact', component: ContactComponent
+  },
+  {
+    path: 'users', component: UserlistComponent
+  },
+  {
+    path: 'users/:id', component: UserComponent
+  },
+  {
+    path: 'dashboard', component: DashboardComponent
+  },
+  {
+    path: 'products', component: ProductsComponent,
+    children: [
+      { path: 'books', component: BooksComponent },
+      { path: 'electronics', component: ElectronicsComponent }
+    ]
+  },
+  {
+    path: 'yourhome', redirectTo: '/home', pathMatch: 'full'
+  },
+  { path: 'customers', loadChildren: () => import('./customers/customers.module').then(m => m.CustomersModule) },
+  {
+    path: '', redirectTo: '/home', pathMatch: 'full'
+  },
+  { path: 'orders', loadChildren: () => import('./orders/orders.module').then(m => m.OrdersModule) },
+  {
+    path: '**', component: PagenotfoundComponent
+  }
+
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+
+customers module
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { CustomersRoutingModule } from './customers-routing.module';
+import { CustomersComponent } from './customers.component';
+
+
+@NgModule({
+  declarations: [
+    CustomersComponent
+  ],
+  imports: [
+    CommonModule,
+    CustomersRoutingModule
+  ]
+})
+export class CustomersModule { }
+
+Orders:
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { OrdersRoutingModule } from './orders-routing.module';
+import { OrdersComponent } from './orders.component';
+
+
+@NgModule({
+  declarations: [
+    OrdersComponent
+  ],
+  imports: [
+    CommonModule,
+    OrdersRoutingModule
+  ]
+})
+export class OrdersModule { }
+
+app.component.html
+<div class="container">
+    <h1 class="text-center">Routing App</h1>
+    <hr>
+    <!-- Traditionally displayed -->
+    <!-- <app-home></app-home>
+    <app-contact></app-contact> -->
+    <!-- With routing -->
+    <nav>
+        <ul>
+            <li><a routerLinkActive="active" routerLink="home">Home</a></li>
+            <li><a routerLinkActive="active" routerLink="contact">Contact</a></li>
+            <li><a routerLinkActive="active" routerLink="users">Users</a></li>
+            <li><a routerLinkActive="active" routerLink="products">Products</a></li>
+            <li><a routerLinkActive="active" routerLink="customers">Customers</a></li>
+            <li><a routerLinkActive="active" routerLink="orders">Orders</a></li>
+            <li><a routerLinkActive="active" routerLink="dashboard">Dashboard</a></li>
+
+        </ul>
+    </nav>
+    <hr>
+    <router-outlet></router-outlet>
+
+</div>
+.....................................................................................
+What is lazy loading?
+
+  In Angular the whole app is bundled as single js file (bundle.js).
+
+if your app grows big, the bundle also going to be big. when you load your app firt time in browser, it loads all js files which even not necessary the momement you launch app.
+
+it want to spilt the bundle.js file into menu driven 
+  products related js  is a separate bundle , which is requested from the server when i click product menu first time, it starts caching the local browser.
+
+Test Lazy Loading is working or not?
+
+Open browser , check network tab.
+......................................................................................
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
